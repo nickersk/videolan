@@ -36,32 +36,50 @@ int dts_downmix_init (int input, int flags, level_t * level,
 		      level_t clev, level_t slev)
 {
     static uint8_t table[11][10] = {
-	{DTS_MONO,	DTS_MONO,	DTS_MONO,	DTS_MONO,
-	 DTS_MONO,	DTS_MONO,	DTS_MONO,	DTS_MONO,
-         DTS_MONO,	DTS_MONO},
-	{DTS_CHANNEL,	DTS_STEREO,	DTS_STEREO,	DTS_STEREO,
-	 DTS_STEREO,	DTS_STEREO,	DTS_STEREO,	DTS_STEREO,
-  	 DTS_STEREO,	DTS_STEREO},
-	{DTS_CHANNEL,	DTS_STEREO,	DTS_STEREO,	DTS_STEREO,
-	 DTS_STEREO,	DTS_STEREO,	DTS_STEREO,	DTS_STEREO,
-  	 DTS_STEREO,	DTS_STEREO},
-
-	{DTS_CHANNEL,	DTS_DOLBY,	DTS_STEREO,	DTS_3F,
-	 DTS_STEREO,	DTS_3F,		DTS_STEREO,	DTS_3F},
-	{DTS_CHANNEL,	DTS_DOLBY,	DTS_STEREO,	DTS_STEREO,
-	 DTS_2F1R,	DTS_2F1R,	DTS_2F1R,	DTS_2F1R},
-	{DTS_CHANNEL,	DTS_DOLBY,	DTS_STEREO,	DTS_STEREO,
-	 DTS_2F1R,	DTS_3F1R,	DTS_2F1R,	DTS_3F1R},
-	{DTS_CHANNEL,	DTS_DOLBY,	DTS_STEREO,	DTS_3F,
-	 DTS_2F2R,	DTS_2F2R,	DTS_2F2R,	DTS_2F2R},
-	{DTS_CHANNEL,	DTS_DOLBY,	DTS_STEREO,	DTS_3F,
-	 DTS_2F2R,	DTS_3F2R,	DTS_2F2R,	DTS_3F2R},
-	{DTS_CHANNEL,	DTS_MONO,	DTS_MONO,	DTS_MONO,
-	 DTS_MONO,	DTS_MONO,	DTS_MONO,	DTS_MONO},
-	{DTS_CHANNEL,	DTS_MONO,	DTS_MONO,	DTS_MONO,
-	 DTS_MONO,	DTS_MONO,	DTS_MONO,	DTS_MONO},
-	{DTS_CHANNEL,	DTS_DOLBY,	DTS_STEREO,	DTS_DOLBY,
-	 DTS_DOLBY,	DTS_DOLBY,	DTS_DOLBY,	DTS_DOLBY}
+        /* DTS_MONO */
+        {DTS_MONO,      DTS_MONO,       DTS_MONO,       DTS_MONO,
+         DTS_MONO,      DTS_MONO,       DTS_MONO,       DTS_MONO,
+         DTS_MONO,      DTS_MONO},
+        /* DTS_CHANNEL */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_STEREO,     DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_STEREO},
+        /* DTS_STEREO */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_STEREO,     DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_STEREO},
+        /* DTS_STEREO_SUMDIFF */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_STEREO,     DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_STEREO},
+        /* DTS_STEREO_TOTAL */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_STEREO,     DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_STEREO},
+        /* DTS_3F */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_3F,         DTS_3F,         DTS_3F,
+         DTS_3F,        DTS_3F},
+        /* DTS_2F1R */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_2F1R,       DTS_2F1R,       DTS_2F1R,
+         DTS_2F1R,      DTS_2F1R},
+        /* DTS_3F1R */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_3F,         DTS_3F1R,       DTS_3F1R,
+         DTS_3F1R,      DTS_3F1R},
+        /* DTS_2F2R */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_STEREO,     DTS_2F2R,       DTS_2F2R,
+         DTS_2F2R,      DTS_2F2R},
+        /* DTS_3F2R */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_3F,         DTS_3F2R,       DTS_3F2R,
+         DTS_3F2R,      DTS_3F2R},
+        /* DTS_4F2R */
+        {DTS_MONO,      DTS_CHANNEL,    DTS_STEREO,     DTS_STEREO,
+         DTS_STEREO,    DTS_4F2R,       DTS_4F2R,       DTS_4F2R,
+         DTS_4F2R,      DTS_4F2R},
     };
     int output;
 

@@ -1001,7 +1001,7 @@ int dts_subsubframe (dts_state_t * state)
     /* Generate LFE samples for this subsubframe FIXME!!! */
     if (state->output & DTS_LFE)
     {
-        int i, lfe_samples = 2 * state->lfe * state->subsubframes;
+        int lfe_samples = 2 * state->lfe * state->subsubframes;
         int i_channels = dts_channels[state->output & DTS_CHANNEL_MASK];
 
         lfe_interpolation_fir (state->lfe, 2 * state->lfe,

@@ -974,27 +974,6 @@ int dts_subsubframe (dts_state_t * state)
         }
     }
 
-    /* Generate LFE samples for this subsubframe FIXME!!! */
-    if( 0 )
-    {
-        int i, lfe_samples = 2 * state->lfe * state->subsubframes;
-
-        fprintf( stderr, "lfe reconst (%i):",
-                 2 * state->lfe * (state->lfe == 1 ? 128 : 64) );
-
-        lfe_interpolation_fir (state->lfe, 2 * state->lfe,
-                               state->lfe_data + lfe_samples +
-                               2 * state->lfe * subsubframe,
-                               &state->samples[0/*256*state->prim_channels*/],
-                               32768.0, state->bias);
-
-        for (i = 0; i < lfe_samples * (state->lfe == 1 ? 128 : 64); i++)
-        {
-            ;/*fprintf( stderr, " %i", (int)samples_out_lfe[j] );*/
-        }
-        fprintf( stderr, "\n" );
-    }
-
     /* 32 subbands QMF */
     for (k = 0; k < state->prim_channels; k++)
     {
@@ -1004,7 +983,7 @@ int dts_subsubframe (dts_state_t * state)
         qmf_32_subbands (state, k,
                          subband_samples[k],
                          &state->samples[256*k],
-          /*WTF ???*/    32768.0*17/12/*pcm_to_float[state->source_pcm_res]*/,
+          /*WTF ???*/    32768.0*3/2/*pcm_to_float[state->source_pcm_res]*/,
                          0/*state->bias*/);
     }
 
@@ -1017,6 +996,19 @@ int dts_subsubframe (dts_state_t * state)
     {
         dts_downmix (state->samples, state->amode, state->output, state->bias,
                      state->clev, state->slev);
+    }
+
+    /* Generate LFE samples for this subsubframe FIXME!!! */
+    if (state->output & DTS_LFE)
+    {
+        int i, lfe_samples = 2 * state->lfe * state->subsubframes;
+        int i_channels = dts_channels[state->output & DTS_CHANNEL_MASK];
+
+        lfe_interpolation_fir (state->lfe, 2 * state->lfe,
+                               state->lfe_data + lfe_samples +
+                               2 * state->lfe * subsubframe,
+                               &state->samples[256*i_channels],
+                               8388608.0, state->bias);
     }
 
     return 0;
@@ -1272,7 +1264,7 @@ static void lfe_interpolation_fir (int nDecimationSelect, int nNumDeciSample,
                 rTmp += samples_in[nDeciIndex-J]*prCoeff[k+J*nDeciFactor];
 
             /* Save interpolated samples */
-            samples_out[nInterpIndex++] = rTmp / scale - bias;
+            samples_out[nInterpIndex++] = rTmp / scale + bias;
         }
     }
 }

@@ -37,14 +37,13 @@
 #ifdef WORDS_BIGENDIAN
 
 #   define swable32(x)\
-((((uint8_t*)&x)[0] << 24) | (((uint8_t*)&x)[1] << 16) |  \
- (((uint8_t*)&x)[2] << 8)  | (((uint8_t*)&x)[3]))
+((((uint8_t*)&x)[0] << 16) | (((uint8_t*)&x)[1] << 24) |  \
+ (((uint8_t*)&x)[2])  | (((uint8_t*)&x)[3] << 8))
 
 #else
 
 #   define swable32(x)\
-((((uint8_t*)&x)[0] << 16) | (((uint8_t*)&x)[1] << 24) |  \
- (((uint8_t*)&x)[2])  | (((uint8_t*)&x)[3] << 8))
+((((uint16_t*)&x)[0] << 16) | (((uint16_t*)&x)[1]))
 
 #endif
 

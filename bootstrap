@@ -1,6 +1,6 @@
 #! /bin/sh
 
-##  bootstrap file for libdts -- Sam Hocevar <sam@zoy.org>
+##  generic bootstrap file for libraries -- Sam Hocevar <sam@zoy.org>
 ##  $Id$
 
 set -x
@@ -14,7 +14,9 @@ export CYGWIN
 
 # Check for automake
 amvers="no"
-if automake-1.7 --version >/dev/null 2>&1; then
+if automake-1.8 --version >/dev/null 2>&1; then
+  amvers="-1.8"
+elif automake-1.7 --version >/dev/null 2>&1; then
   amvers="-1.7"
 elif automake-1.6 --version >/dev/null 2>&1; then
   amvers="-1.6"
@@ -54,7 +56,6 @@ rm -f aclocal.m4 configure config.guess config.log config.sub config.cache confi
 rm -Rf autom4te.cache
 (cd autotools && rm -f config.guess config.sub missing mkinstalldirs compile ltmain.sh depcomp install-sh)
 
-aclocal${amvers}
 #libtool# ${libtoolize} --copy --force
 #libtool#
 #libtool# if test -f "ltmain.sh"; then
@@ -62,6 +63,7 @@ aclocal${amvers}
 #libtool#   mv ltmain.sh autotools/
 #libtool# fi
 
+aclocal${amvers}
 autoconf
 autoheader
 automake${amvers} --add-missing --copy

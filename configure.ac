@@ -95,10 +95,14 @@ esac
 AM_CONDITIONAL(NEED_PIC, ${NEED_PIC})
 
 dnl Checks for libraries.
-LIBAO_LIBS="-lm"
-AC_SUBST([LIBAO_LIBS])
-LIBDTS_LIBS="-lm"
-AC_SUBST([LIBDTS_LIBS])
+AC_CHECK_LIB(m,cos,[
+    LIBAO_LIBS="-lm"
+    AC_SUBST([LIBAO_LIBS])
+    LIBDTS_LIBS="-lm"
+    AC_SUBST([LIBDTS_LIBS])
+    COMPARE_LIBS="-lm"
+    AC_SUBST([COMPARE_LIBS])
+])
 
 dnl Checks for header files.
 INCLUDES='-I$(top_srcdir)/include -I$(top_builddir)/include'

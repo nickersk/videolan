@@ -1,0 +1,70 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE=1
+export DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+export DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+# FOR AUTOCONF 2.52 AND NEWER ONLY
+ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
+  confflags += --build $(DEB_HOST_GNU_TYPE)
+else
+  confflags += --build $(DEB_BUILD_GNU_TYPE) --host $(DEB_HOST_GNU_TYPE)
+endif
+
+confflags += --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	./configure $(confflags) --prefix=/usr
+	touch configure-stamp
+
+build: configure-stamp build-stamp
+build-stamp:
+	dh_testdir
+	cd libdts && $(MAKE) CFLAGS=-fPIC CFLAGS+=-DPIC && mv .libs/libdts.a libdts_pic.a && $(MAKE) clean
+	$(MAKE)
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+	-$(MAKE) distclean
+	rm -f libdts/libdts_pic.a
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs -plibdts-dev
+
+	#$(MAKE) install DESTDIR=`pwd`/debian/libdts-dev/
+	cp libdts/.libs/libdts.a libdts/libdts_pic.a `pwd`/debian/libdts-dev/usr/lib
+	cp include/dts.h `pwd`/debian/libdts-dev/usr/include/dtsdec/
+
+binary-indep: build install
+
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installmenu
+	dh_installcron
+	dh_installinfo
+	dh_installmime
+	dh_installchangelogs ChangeLog
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

@@ -162,10 +162,6 @@ void dts_downmix (sample_t * samples, int acmod, int output, sample_t bias,
                   level_t clev, level_t slev);
 void dts_upmix (sample_t * samples, int acmod, int output);
 
-void dts_imdct_init (uint32_t mm_accel);
-void dts_imdct_256 (sample_t * data, sample_t * delay, sample_t bias);
-void dts_imdct_512 (sample_t * data, sample_t * delay, sample_t bias);
-
 #define ROUND(x) ((int)((x) + ((x) > 0 ? 0.5 : -0.5)))
 
 #ifndef LIBDTS_FIXED

@@ -85,19 +85,11 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\libdts\bit_allocate.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\libdts\bitstream.c
 # End Source File
 # Begin Source File
 
 SOURCE=..\libdts\downmix.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libdts\imdct.c
 # End Source File
 # Begin Source File
 
@@ -118,6 +110,26 @@ SOURCE=..\libdts\dts_internal.h
 # Begin Source File
 
 SOURCE=..\libdts\bitstream.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\libdts\tables_adpcm.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\libdts\tables_fir.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\libdts\tables_huffman.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\libdts\tables_quantization.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\libdts\tables_vq.h
 # End Source File
 # Begin Source File
 

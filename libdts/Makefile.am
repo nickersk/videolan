@@ -9,4 +9,4 @@ libdts_la_LDFLAGS = -no-undefined
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdts.pc
 
-EXTRA_DIST = configure.incl dts_internal.h bitstream.h tables.h tables_quantization.h tables_huffman.h tables_fir.h tables_adpcm.h
+EXTRA_DIST = configure.incl dts_internal.h bitstream.h tables.h tables_quantization.h tables_huffman.h tables_fir.h tables_adpcm.h tables_vq.h

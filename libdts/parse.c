@@ -663,6 +663,12 @@ int dts_subframe_header (dts_state_t * state)
                 state->joint_scale_factor[j][k] = scale;/*joint_scale_table[scale];*/
             }
 
+            if (!state->debug_flag & 0x02)
+            {
+                fprintf (stderr, "Joint stereo coding not supported\n");
+                state->debug_flag |= 0x02;
+            }
+
 #ifdef DEBUG
             fprintf (stderr, "Joint scale factor index:\n");
             for (k = state->subband_activity[j];
@@ -703,10 +709,15 @@ int dts_subframe_header (dts_state_t * state)
              k < state->subband_activity[j]; k++)
         {
             /* 1 vector -> 32 samples */
-            int vq_index = bitstream_get (state, 10);
+            state->high_freq_vq[j][k] = bitstream_get (state, 10);
 
+            if (!state->debug_flag & 0x01)
+            {
+                fprintf (stderr, "High frequencies VQ coding not supported\n");
+                state->debug_flag |= 0x01;
+            }
 #ifdef DEBUG
-            fprintf( stderr, "VQ index: %i\n", vq_index );
+            fprintf( stderr, "VQ index: %i\n", state->high_freq_vq[j][k] );
 #endif
             /* WE DON'T HAVE THE VQ TABLE!!!! */
         }
@@ -915,6 +926,23 @@ int dts_subsubframe (dts_state_t * state)
                               (adpcm_vb[state->prediction_vq[k][l]][n-1] *
                                state->subband_samples_hist[k][l][m-n+4]/8192);
                 }
+            }
+        }
+
+        /*
+         * Decode VQ encoded high frequencies
+         */
+        for (l = state->vq_start_subband[k];
+             l < state->subband_activity[k]; l++)
+        {
+            /* 1 vector -> 32 samples but we only need the 8 samples
+             * for this subsubframe. */
+            int m;
+
+            for (m=0; m<8; m++)
+            {
+                subband_samples[k][l][m] = 0;
+                //state->high_freq_vq[j][k] * state->scale_factor[k][l][0];
             }
         }
     }

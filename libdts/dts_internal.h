@@ -103,6 +103,7 @@ struct dts_state_s {
     int dynrange_coef;
 
     /* VQ encoded high frequency subbands */
+    int high_freq_vq[DTS_PRIM_CHANNELS_MAX][DTS_SUBSUBFAMES_MAX];
 
     /* Low frequency effect data */
     double lfe_data[2*DTS_SUBSUBFAMES_MAX*DTS_LFE_MAX * 2 /*history*/];
@@ -142,6 +143,9 @@ struct dts_state_s {
 
     /* Pre-calculated cosine modulation coefs for the QMF */
     double cos_mod[544];
+
+    /* Debug flag */
+    int debug_flag;
 };
 
 #define LEVEL_PLUS6DB 2.0

@@ -77,10 +77,22 @@ else
     esac
 fi
 
-dnl Checks for libtool - this must be done after we set cflags
-AC_DISABLE_SHARED
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
+#libtool# dnl Checks for libtool - this must be done after we set cflags
+#libtool# AC_DISABLE_SHARED
+#libtool# AC_LIBTOOL_WIN32_DLL
+#libtool# AC_PROG_LIBTOOL
+
+dnl Build the PIC library? - to be removed once libtool is re-enabled
+AC_PROG_RANLIB
+case "${target_os}" in
+  *mingw32* | *cygwin* | *djgpp*)
+    NEED_PIC=false
+    ;;
+  *)
+    NEED_PIC=:
+    ;;
+esac
+AM_CONDITIONAL(NEED_PIC, ${NEED_PIC})
 
 dnl Checks for libraries.
 LIBAO_LIBS="-lm"

@@ -35,19 +35,19 @@ if test "$amvers" = "no"; then
   exit 1
 fi
 
-# Check for libtool
-libtoolize="no"
-if glibtoolize --version >/dev/null 2>&1; then
-  libtoolize="glibtoolize"
-elif libtoolize --version >/dev/null 2>&1; then
-  libtoolize="libtoolize"
-fi
-
-if test "$libtoolize" = "no"; then
-  set +x
-  echo "$0: you need libtool"
-  exit 1
-fi
+#libtool# # Check for libtool
+#libtool# libtoolize="no"
+#libtool# if glibtoolize --version >/dev/null 2>&1; then
+#libtool#   libtoolize="glibtoolize"
+#libtool# elif libtoolize --version >/dev/null 2>&1; then
+#libtool#   libtoolize="libtoolize"
+#libtool# fi
+#libtool#
+#libtool# if test "$libtoolize" = "no"; then
+#libtool#   set +x
+#libtool#   echo "$0: you need libtool"
+#libtool#   exit 1
+#libtool#  fi
 
 # Remove old cruft
 rm -f aclocal.m4 configure config.guess config.log config.sub config.cache config.h.in config.h compile ltmain.sh libtool ltconfig missing mkinstalldirs depcomp install-sh
@@ -55,12 +55,12 @@ rm -Rf autom4te.cache
 (cd autotools && rm -f config.guess config.sub missing mkinstalldirs compile ltmain.sh depcomp install-sh)
 
 aclocal${amvers}
-${libtoolize} --copy --force
-
-if test -f "ltmain.sh"; then
-  echo "$0: working around a minor libtool issue"
-  mv ltmain.sh autotools/
-fi
+#libtool# ${libtoolize} --copy --force
+#libtool#
+#libtool# if test -f "ltmain.sh"; then
+#libtool#   echo "$0: working around a minor libtool issue"
+#libtool#   mv ltmain.sh autotools/
+#libtool# fi
 
 autoconf
 autoheader

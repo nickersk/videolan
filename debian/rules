@@ -22,7 +22,6 @@ configure-stamp:
 build: configure-stamp build-stamp
 build-stamp:
 	dh_testdir
-	cd libdts && $(MAKE) CFLAGS=-fPIC CFLAGS+=-DPIC && mv .libs/libdts.a libdts_pic.a && $(MAKE) clean
 	$(MAKE)
 	touch build-stamp
 
@@ -31,7 +30,6 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 	-$(MAKE) distclean
-	rm -f libdts/libdts_pic.a
 	dh_clean
 
 install: build
@@ -39,10 +37,9 @@ install: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs -plibdts-dev usr/lib usr/include
-
-	#$(MAKE) install DESTDIR=`pwd`/debian/libdts-dev/
-	cp libdts/.libs/libdts.a libdts/libdts_pic.a `pwd`/debian/libdts-dev/usr/lib
-	cp include/dts.h `pwd`/debian/libdts-dev/usr/include/
+	$(MAKE) install DESTDIR=`pwd`/debian/libdts-dev/
+	rm -Rf debian/libdts-dev/usr/bin
+	rm -Rf debian/libdts-dev/usr/share/man
 
 binary-indep: build install
 

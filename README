@@ -1,4 +1,5 @@
-ABOUT LIBDTS
+About libdts
+------------
 
 libdts is a free library for decoding DTS Coherent Acoustics streams. It is
 released under the terms of the GPL license. The DTS Coherent Acoustics
@@ -24,7 +25,8 @@ The main goals in libdts development are:
 The project homepage is at http://www.videolan.org/dtsdec.html
 
 
-DTSDEC
+dtsdec
+------
 
 dtsdec is a test program for libdts. It decodes DTS Coherent Acoustics streams,
 and also includes a demultiplexer for mpeg-1 and mpeg-2 program streams.
@@ -47,7 +49,8 @@ testing and conformance testing.
 The "-r" option is used to disable the dynamic range compression.
 
 
-OTHER PROJECTS USING LIBDTS
+Other projects using libdts
+---------------------------
 
 right now libdts is only being used by VLC media player
 (http://www.videolan.org/) a cross-platform video player and streaming
@@ -56,7 +59,8 @@ solution.
 If you use libdts in another project, let us know !
 
 
-TASKS
+Tasks
+-----
 
 There are several places where we could easily use some help:
 
@@ -76,21 +80,27 @@ There are several places where we could easily use some help:
 	platform, send us a patch !
 
 
-REFERENCES
+References
+----------
 
 The DTS Coherent Acoustics standard (ETSI 102 114 v1.2.1), as published by the
 ETSI, is available at http://pda.etsi.org/pda/queryform.asp (look for DTS
 Coherent Acoustics)
 
 
-SVN REPOSITORY
+SVN repository
+--------------
 
 The latest libdts and dtsdec source code can always be found by anonymous
 SVN repository:
 
-# svn co svn://svn.zoy.org/dtsdec
+# svn co svn://svn.videolan.org/libdts/trunk libdts-trunk
 
-SUPPORT / MAILING LISTS
+If you build libdts from SVN you'll have to run ./bootstrap first.
+
+
+Support / mailing-lists
+-----------------------
 
 See the support information at http://www.videolan.org/support/
 
@@ -99,3 +109,62 @@ libdts-devel
 This is the main mailing list for technical discussion about
 libdts. Anyone wanting to work on libdts, or maybe just stay informed
 about the development process, should probably subscribe to this list.
+
+
+Unix build instructions
+-----------------------
+
+./configure
+make
+make install
+
+
+Building for win32
+------------------
+
+There are at least three ways to do it:
+
+- natively on Windows using Microsoft VC++ and the vc++ project
+  included in this distribution.
+
+- natively on Windows using MSYS + MINGW (www.mingw.org) (MSYS is a
+  minimal build environnement to compile unixish projects under
+  windows. It provides all the common unix tools like sh, gmake...)
+
+- or on Linux, using the mingw32 cross-compiler
+
+
+Building using MSYS + MINGW on windows
+--------------------------------------
+
+First you will need to download and install the latest MSYS (version
+1.0.7 as of now) and MINGW. The installation is really easy. Begin
+with the MSYS auto-installer and once this is done, extract MINGW into
+c:\msys\1.0\mingw. You also have to remember to remove the make
+utility included with MINGW as it conflicts with the one from MSYS
+(just rename or remove c:\msys\1.0\mingw\bin\make.exe).
+
+http://prdownloads.sourceforge.net/mingw/MSYS-1.0.7-i686-2002.04.24-1.exe
+http://prdownloads.sourceforge.net/mingw/MinGW-1.1.tar.gz
+
+Then you can build the package using:
+# ./configure
+# make
+
+
+Building using the mingw32 cross-compiler
+-----------------------------------------
+
+You need to install mingw32 first. For Debian GNU/Linux users, there
+is a mingw32 package. Otherwise you might get it from the mingw site
+at http://www.mingw.org/download.shtml.
+
+The videolan project also keeps precompiled mingw32 binaries at
+http://www.videolan.org/vlc/windows.html . If you install these,
+you'll have to set your PATH accordingly to include
+/usr/local/cross-tools/bin too.
+
+The build should then proceed using something like:
+# CC=i586-mingw32msvc-gcc ./configure --host=i586-mingw32msvc
+# make
+

@@ -1,1 +1,1 @@
-EXTRA_DIST = control rules changelog copyright compat dirs
+EXTRA_DIST = control rules changelog copyright compat

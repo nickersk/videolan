@@ -38,18 +38,18 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_clean -k
-	dh_installdirs -plibdts-dev
+	dh_installdirs -plibdts-dev usr/lib usr/include
 
 	#$(MAKE) install DESTDIR=`pwd`/debian/libdts-dev/
 	cp libdts/.libs/libdts.a libdts/libdts_pic.a `pwd`/debian/libdts-dev/usr/lib
-	cp include/dts.h `pwd`/debian/libdts-dev/usr/include/dtsdec/
+	cp include/dts.h `pwd`/debian/libdts-dev/usr/include/
 
 binary-indep: build install
 
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	dh_installdocs
+	dh_installdocs AUTHORS NEWS README TODO
 	dh_installmenu
 	dh_installcron
 	dh_installinfo

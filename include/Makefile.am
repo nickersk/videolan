@@ -1,3 +1,3 @@
-pkginclude_HEADERS = dts.h audio_out.h
+include_HEADERS = dts.h
 
-EXTRA_DIST = tendra.h
+EXTRA_DIST = tendra.h audio_out.h

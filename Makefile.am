@@ -1,4 +1,4 @@
-SUBDIRS = libdts libao src test
-DIST_SUBDIRS = $(SUBDIRS) autotools include debian doc vc++
+SUBDIRS = libdts libao src test include
+DIST_SUBDIRS = $(SUBDIRS) autotools debian doc vc++
 
 EXTRA_DIST = bootstrap

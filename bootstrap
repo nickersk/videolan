@@ -1,8 +1,38 @@
 #! /bin/sh
+
 set -x
+set -e
+
+# Get a sane environment, just in case
+LANG=C
+export LANG
+CYGWIN=binmode
+export CYGWIN
+
+# Check for libtool
+libtoolize="no"
+if glibtoolize --version >/dev/null 2>&1; then
+  libtoolize="glibtoolize"
+elif libtoolize --version >/dev/null 2>&1; then
+  libtoolize="libtoolize"
+fi
+
+if test "$libtoolize" = "no"; then
+  set +x
+  echo "$0: you need libtool"
+  exit 1
+fi
+
 aclocal -I autotools
-libtoolize --force --copy
+${libtoolize} --force --copy
+
+if test -f "ltmain.sh"; then
+  echo "$0: working around a minor libtool issue"
+  mv ltmain.sh autotools/
+fi
+
+autoconf
 autoheader
 automake --add-missing --copy
-autoconf
+
 rm -f config.cache

@@ -7,7 +7,7 @@ AC_CONFIG_FILES([Makefile autotools/Makefile include/Makefile test/Makefile
     doc/Makefile src/Makefile libdts/Makefile libao/Makefile vc++/Makefile
     debian/Makefile libdts/libdts.pc])
 AM_INIT_AUTOMAKE([dtsdec],[0.0.2-svn])
-AC_CONFIG_HEADERS([include/config.h])
+AM_CONFIG_HEADER(include/config.h)
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST
 
@@ -83,6 +83,10 @@ AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
 dnl Checks for libraries.
+LIBAO_LIBS="-lm"
+AC_SUBST([LIBAO_LIBS])
+LIBDTS_LIBS="-lm"
+AC_SUBST([LIBDTS_LIBS])
 
 dnl Checks for header files.
 INCLUDES='-I$(top_srcdir)/include -I$(top_builddir)/include'

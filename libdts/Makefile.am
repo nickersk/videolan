@@ -3,7 +3,7 @@ AM_CFLAGS = $(OPT_CFLAGS) $(LIBDTS_CFLAGS)
 lib_LTLIBRARIES = libdts.la
 
 libdts_la_SOURCES = bitstream.c parse.c downmix.c
-libdts_la_LIBADD = $(LIBDTS_LIBS) -lm
+libdts_la_LIBADD = $(LIBDTS_LIBS)
 libdts_la_LDFLAGS = -no-undefined
 
 pkgconfigdir = $(libdir)/pkgconfig

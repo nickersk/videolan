@@ -7,7 +7,6 @@
     right now I'm assuming the output of the 32 subbands QMF is supposed to
     be in 16 bits/sample form but this seems very dubious.
   - fix downmix (user proper channes coefs, move downmix before QMF)
-  - lfe support
   - sum/difference audio channels
   - vq encoded high frequencies (where are the codebooks ??)
   - joint channels coding

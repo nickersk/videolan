@@ -3,7 +3,7 @@
  * Copyright (C) 2004 Gildas Bazin <gbazin@videolan.org>
  *
  * This file is part of dtsdec, a free DTS Coherent Acoustics stream decoder.
- * See http://www.videolan.org/dtsdec for updates.
+ * See http://www.videolan.org/dtsdec.html for updates.
  *
  * dtsdec is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

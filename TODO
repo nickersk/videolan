@@ -8,7 +8,6 @@
     be in 16 bits/sample form but this seems very dubious.
   - fix downmix (user proper channes coefs, move downmix before QMF)
   - sum/difference audio channels
-  - vq encoded high frequencies (where are the codebooks ??)
   - joint channels coding
   - dynamic range
   - dialog normalization

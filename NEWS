@@ -1,3 +1,7 @@
+dtsdec-0.0.2-svn
+
+Support for high frequencies vector quantization.
+
 dtsdec-0.0.1 Sun Feb 8 21:49:17 CET 2004
 
 First public release of libdts, a DTS Coherent Acoustics decoder based

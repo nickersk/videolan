@@ -1,4 +1,68 @@
 ------------------------------------------------------------------------
+r23 | gbazin | 2004-02-29 13:04:29 +0100 (Sun, 29 Feb 2004) | 2 lines
+Changed paths:
+   M /trunk/AUTHORS
+   M /trunk/NEWS
+   M /trunk/configure.ac
+
+* ALL: release of libdts-0.0.2
+
+------------------------------------------------------------------------
+r22 | gbazin | 2004-02-29 12:43:19 +0100 (Sun, 29 Feb 2004) | 2 lines
+Changed paths:
+   M /trunk/libao/audio_out.c
+   M /trunk/libao/audio_out_internal.h
+   M /trunk/libao/audio_out_wav.c
+   M /trunk/libao/convert2s16.c
+
+* libao/*: modified wav audio_out to output float multichannel wav files.
+
+------------------------------------------------------------------------
+r21 | gbazin | 2004-02-25 21:44:33 +0100 (Wed, 25 Feb 2004) | 2 lines
+Changed paths:
+   M /trunk/vc++/inttypes.h
+   M /trunk/vc++/libao.dsp
+
+* vc++/inttypes.h, vc++/libao.dsp: msvc fixes, courtesy of John Adcock.
+
+------------------------------------------------------------------------
+r20 | gbazin | 2004-02-25 14:53:52 +0100 (Wed, 25 Feb 2004) | 3 lines
+Changed paths:
+   M /trunk/libdts/dts_internal.h
+   M /trunk/vc++/libdts.dsp
+
+* libdts/dts_internal.h: removed unused prototypes.
+* vc++/libdts.dsp: include the right files (not tested).
+
+------------------------------------------------------------------------
+r19 | sam | 2004-02-25 14:03:33 +0100 (Wed, 25 Feb 2004) | 5 lines
+Changed paths:
+   M /trunk/bootstrap
+   M /trunk/configure.ac
+   M /trunk/debian/rules
+   M /trunk/libdts/Makefile.am
+   M /trunk/src/Makefile.am
+
+  * configure.ac libdts/Makefile.am:
+    + On non-MS systems, build libdts_pic.a in addition to libdts.a.
+  * bootstrap:
+    + Disabled libtool until we build a real shared library.
+
+------------------------------------------------------------------------
+r18 | sam | 2004-02-24 20:39:03 +0100 (Tue, 24 Feb 2004) | 7 lines
+Changed paths:
+   M /trunk/ChangeLog
+   M /trunk/debian/changelog
+   M /trunk/libdts/Makefile.am
+
+  * libdts/Makefile.am:
+    + Added missing tables_vq.h to the distributed files.
+  * debian/changelog:
+    + First Debian upload.
+  * ChangeLog:
+    + Generated a changelog using svn log -v.
+
+------------------------------------------------------------------------
 r17 | sam | 2004-02-24 20:30:41 +0100 (Tue, 24 Feb 2004) | 5 lines
 Changed paths:
    M /trunk

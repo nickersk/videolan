@@ -44,11 +44,16 @@ int channels_multi (int flags);
 void convert2s16_multi (convert_t * f, int16_t * s16, int flags);
 void convert2s16_wav (convert_t * f, int16_t * s16, int flags);
 void s16_swap (int16_t * s16, int channels);
+void s32_swap (int32_t * s32, int channels);
 
 #ifdef WORDS_BIGENDIAN
 #define s16_LE(s16,channels) s16_swap (s16, channels)
 #define s16_BE(s16,channels) do {} while (0)
+#define s32_LE(s32,channels) s32_swap (s32, channels)
+#define s32_BE(s32,channels) do {} while (0)
 #else
 #define s16_LE(s16,channels) do {} while (0)
 #define s16_BE(s16,channels) s16_swap (s16, channels)
+#define s32_LE(s32,channels) do {} while (0)
+#define s32_BE(s32,channels) s32_swap (s32, channels)
 #endif

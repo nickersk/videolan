@@ -44,6 +44,7 @@ extern ao_open_t ao_windolby_open;
 extern ao_open_t ao_wav_open;
 extern ao_open_t ao_wavdolby_open;
 extern ao_open_t ao_wav6_open;
+extern ao_open_t ao_wavall_open;
 extern ao_open_t ao_aif_open;
 extern ao_open_t ao_aifdolby_open;
 extern ao_open_t ao_peak_open;
@@ -77,6 +78,7 @@ static ao_driver_t audio_out_drivers[] = {
     {"wav", ao_wav_open},
     {"wavdolby", ao_wavdolby_open},
     {"wav6", ao_wav6_open},
+    {"wavall", ao_wavall_open},
     {"aif", ao_aif_open},
     {"aifdolby", ao_aifdolby_open},
     {"peak", ao_peak_open},

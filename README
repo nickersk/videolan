@@ -44,8 +44,6 @@ dtsdec does a stereo downmix and outputs to your speakers, but you can
 try other choices using this option. This is also used for performance
 testing and conformance testing.
 
-The "-c" option is used to disable all optimizations (currently only djbfft).
-
 The "-r" option is used to disable the dynamic range compression.
 
 

@@ -6,7 +6,7 @@ AC_CONFIG_AUX_DIR(autotools)
 AC_CONFIG_FILES([Makefile autotools/Makefile include/Makefile test/Makefile
     doc/Makefile src/Makefile libdts/Makefile libao/Makefile vc++/Makefile
     debian/Makefile libdts/libdts.pc])
-AM_INIT_AUTOMAKE([libdts],[0.0.2-svn])
+AM_INIT_AUTOMAKE([libdts],[0.0.2])
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST

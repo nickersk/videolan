@@ -1,6 +1,8 @@
-dtsdec-0.0.2-svn
+libdts-0.0.2 Sun Feb 29 12:45:21 CET 2004
 
 Support for high frequencies vector quantization.
+Improved build system.
+Debian packaging files.
 
 dtsdec-0.0.1 Sun Feb 8 21:49:17 CET 2004
 

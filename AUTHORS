@@ -1,5 +1,8 @@
 Gildas Bazin <gbazin@videolan.org> implementation of the
-DTS Coherent Acoustics decoder and current maintainer of dtsdec.
+DTS Coherent Acoustics decoder and current maintainer of libdts.
+
+Other libdts contributors include:
+        Sam Hocevar <sam@zoy.org> - build system improvements and debian package
 
 While the libdts part of the source code was mostly written from scratch, this
 project was started from the a52dec code base so the original credits for

@@ -34,8 +34,9 @@
 
 #if defined(__OpenBSD__) || defined(__NetBSD__)
 #include <soundcard.h>
-#elif defined(__FreeBSD__)
-#include <machine/soundcard.h>
+#else
+#include <sys/soundcard.h>
+#if defined(__FreeBSD__)
 #ifndef AFMT_S16_NE
 #include <machine/endian.h>
 #if BYTE_ORDER == LITTLE_ENDIAN
@@ -44,8 +45,7 @@
 #define AFMT_S16_NE AFMT_S16_BE
 #endif
 #endif
-#else
-#include <sys/soundcard.h>
+#endif
 #endif
 
 #if defined(__NetBSD__)

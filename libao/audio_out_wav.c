@@ -159,7 +159,11 @@ static int wav_channels (int flags, uint32_t * speaker_flags)
 static int wav_play (ao_instance_t * _instance, int flags, sample_t * _samples)
 {
     wav_instance_t * instance = (wav_instance_t *) _instance;
-    float ordered_samples[256 * 6];
+    union
+    {
+        float floats[256 * 6];
+        int16_t words[0];
+    } ordered_samples;
     int chans, size;
     uint32_t speaker_flags;
 
@@ -222,7 +226,7 @@ static int wav_play (ao_instance_t * _instance, int flags, sample_t * _samples)
         return 1;
 
     if (chans == 2) {
-        convert2s16_2 (samples, (int16_t *)ordered_samples);
+        convert2s16_2 (samples, ordered_samples.words);
         s16_LE ((int16_t *)ordered_samples, chans);
         size = 256 * sizeof (int16_t) * chans;
     } else {
@@ -233,20 +237,20 @@ static int wav_play (ao_instance_t * _instance, int flags, sample_t * _samples)
             flags &= ~DTS_LFE;
             for (j = 0; j < chans; j++)
                 for (i = 0; i < 256; i++)
-                  ordered_samples[i * chans + chan_map_lfe[flags][j]] =
+                  ordered_samples.floats[i * chans + chan_map_lfe[flags][j]] =
                         _samples[j * 256 + i];
         }
         else
             for (j = 0; j < chans; j++)
                 for (i = 0; i < 256; i++)
-                    ordered_samples[i * chans + chan_map[flags][j]] =
+                    ordered_samples.floats[i * chans + chan_map[flags][j]] =
                         _samples[j * chans + i];
 
         s32_LE (ordered_samples, chans);
         size = 256 * sizeof (float) * chans;
     }
 
-    fwrite (ordered_samples, size, 1, stdout);
+    fwrite (&ordered_samples, size, 1, stdout);
     instance->size += size;
 
     return 0;

@@ -227,7 +227,7 @@ static int wav_play (ao_instance_t * _instance, int flags, sample_t * _samples)
 
     if (chans == 2) {
         convert2s16_2 (samples, ordered_samples.words);
-        s16_LE ((int16_t *)ordered_samples, chans);
+        s16_LE (ordered_samples.words, chans);
         size = 256 * sizeof (int16_t) * chans;
     } else {
         int i, j;

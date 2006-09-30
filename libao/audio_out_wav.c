@@ -163,6 +163,7 @@ static int wav_play (ao_instance_t * _instance, int flags, sample_t * _samples)
     {
         float floats[256 * 6];
         int16_t words[0];
+        int32_t dwords[0];
     } ordered_samples;
     int chans, size;
     uint32_t speaker_flags;
@@ -246,7 +247,7 @@ static int wav_play (ao_instance_t * _instance, int flags, sample_t * _samples)
                     ordered_samples.floats[i * chans + chan_map[flags][j]] =
                         _samples[j * chans + i];
 
-        s32_LE (ordered_samples, chans);
+        s32_LE (ordered_samples.dwords, chans);
         size = 256 * sizeof (float) * chans;
     }
 

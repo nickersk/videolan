@@ -179,7 +179,7 @@ static void handle_args (int argc, char ** argv)
 		demux_track = strtol (optarg, &s, 0);
 		if (demux_track < 0x88)
 		    demux_track += 0x88;
-		if (demux_track < 0x88 || demux_track > 0x88 || *s) {
+		if (demux_track < 0x88 || demux_track > 0x8f || *s) {
 		    fprintf (stderr, "Invalid track number: %s\n", optarg);
 		    print_usage (argv);
 		}

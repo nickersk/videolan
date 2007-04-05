@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.54)
-AC_INIT
+AC_INIT([libdts],[0.0.3])
 AC_CONFIG_SRCDIR([src/dtsdec.c])
 AC_CONFIG_AUX_DIR(autotools)
 AC_CONFIG_FILES([Makefile autotools/Makefile include/Makefile test/Makefile
     doc/Makefile src/Makefile libdts/Makefile libao/Makefile vc++/Makefile
     debian/Makefile libdts/libdts.pc])
-AM_INIT_AUTOMAKE([libdts],[0.0.2])
+AM_INIT_AUTOMAKE([1.5 dist-bzip2 no-dist-gzip -Wall])
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST

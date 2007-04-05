@@ -1,3 +1,9 @@
+libdts-0.0.3 Thu Apr  5 20:48:56 EEST 2007
+
+Fix for pointer aliasing.
+Minor build system updates.
+FreBSD compile fix.
+
 libdts-0.0.2 Sun Feb 29 12:45:21 CET 2004
 
 Support for high frequencies vector quantization.

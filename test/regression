@@ -18,15 +18,15 @@ if [ $# -ge 1 ]; then testfile="$1"; fi
 dirs=`awk -F '#' '{print $1}' $testfile`
 
 basedir=`head -n 1 $testfile | awk '{print $2}'`
-cd $srcdir; if [ ! -d $basedir ]; then
-    cd ..; if [ ! -d $basedir ]; then exit 77; fi	# for make distcheck
+cd "$srcdir"; if [ ! -d "$basedir" ]; then
+    cd ..; if [ ! -d "$basedir" ]; then exit 77; fi	# for make distcheck
 fi
-basedir=`cd $basedir;pwd`
+basedir=`cd "$basedir";pwd`
 
-cd $builddir
+cd "$builddir"
 error=0
 
-dtsdec="../src/dtsdec"; if [ ! -x $dtsdec ]; then
+dtsdec="../src/dtsdec"; if [ ! -x "$dtsdec" ]; then
     if [ -x ../vc++/Release/dtsdec.exe ]; then
 	dtsdec="../vc++/Release/dtsdec.exe"
 	basedir=`echo "$basedir" | sed "s,/cygdrive/\(.\)/,\1:/,"`
@@ -40,8 +40,8 @@ fi
 
 for dir in $dirs; do
     echo $dir
-    $dtsdec -co float $basedir/$dir/stream >/dev/null 2>&1 >output.float
-    ./compare output.float $basedir/$dir/output.float || error=1
+    "$dtsdec" -co float "$basedir/$dir/stream" >/dev/null 2>&1 >output.float
+    ./compare output.float "$basedir/$dir/output.float" || error=1
     rm -f output.float
 done
 

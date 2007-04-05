@@ -1,4 +1,5 @@
 AM_CFLAGS = $(DTSDEC_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include
 
 bin_PROGRAMS = dtsdec extract_dts
 dtsdec_SOURCES = dtsdec.c getopt.c gettimeofday.c

@@ -13,6 +13,7 @@ AC_CANONICAL_HOST
 
 dnl Checks for compiler
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_GCC_TRADITIONAL
 
 dnl CC-specific flags
@@ -105,8 +106,6 @@ AC_CHECK_LIB(m,cos,[
 ])
 
 dnl Checks for header files.
-INCLUDES='-I$(top_srcdir)/include -I$(top_builddir)/include'
-AC_SUBST([INCLUDES])
 AC_CHECK_HEADERS([sys/time.h time.h sys/timeb.h io.h])
 AC_CHECK_TYPES([struct timeval], [], [],
     [#include <sys/time.h>

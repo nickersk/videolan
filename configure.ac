@@ -48,11 +48,11 @@ if test x"$GCC" = x"yes"; then
     case "$host" in
     i?86-* | k?-*)
 	case "$host" in
-	i386-*) TRY_CFLAGS="$OPT_CFLAGS -mcpu=i386";;
-	i486-*) TRY_CFLAGS="$OPT_CFLAGS -mcpu=i486";;
-	i586-*) TRY_CFLAGS="$OPT_CFLAGS -mcpu=pentium";;
-	i686-*) TRY_CFLAGS="$OPT_CFLAGS -mcpu=pentiumpro";;
-	k6-*)   TRY_CFLAGS="$OPT_CFLAGS -mcpu=k6";;
+	i386-*) TRY_CFLAGS="$OPT_CFLAGS -mtune=i386";;
+	i486-*) TRY_CFLAGS="$OPT_CFLAGS -mtune=i486";;
+	i586-*) TRY_CFLAGS="$OPT_CFLAGS -mtune=pentium";;
+	i686-*) TRY_CFLAGS="$OPT_CFLAGS -mtune=pentiumpro";;
+	k6-*)   TRY_CFLAGS="$OPT_CFLAGS -mtune=k6";;
 	esac
 	AC_TRY_CFLAGS([$TRY_CFLAGS $CFLAGS],[OPT_CFLAGS=$TRY_CFLAGS]);;
     sparc-* | sparc64-*)

@@ -16,6 +16,13 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_GCC_TRADITIONAL
 
+dnl Libtool
+m4_undefine([AC_PROG_CXX])
+m4_defun([AC_PROG_CXX],[])
+m4_undefine([AC_PROG_F77])
+m4_defun([AC_PROG_F77],[])
+AC_PROG_LIBTOOL
+
 dnl CC-specific flags
 AC_SUBST([OPT_CFLAGS])
 if test x"$GCC" = x"yes"; then
@@ -84,7 +91,6 @@ fi
 #libtool# AC_PROG_LIBTOOL
 
 dnl Build the PIC library? - to be removed once libtool is re-enabled
-AC_PROG_RANLIB
 case "${target_os}" in
   *mingw32* | *cygwin* | *djgpp*)
     NEED_PIC=false

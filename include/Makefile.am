@@ -1,3 +1,2 @@
 include_HEADERS = dts.h
-
-EXTRA_DIST = tendra.h audio_out.h
+noinst_HEADERS = tendra.h audio_out.h

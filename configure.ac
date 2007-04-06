@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.54)
-AC_INIT([libdts],[0.0.3])
+AC_INIT([libdca],[0.0.3])
 AC_CONFIG_SRCDIR([src/dtsdec.c])
 AC_CONFIG_AUX_DIR(autotools)
 AC_CONFIG_FILES([Makefile autotools/Makefile include/Makefile test/Makefile
-    doc/Makefile src/Makefile libdts/Makefile libao/Makefile vc++/Makefile
-    debian/Makefile libdts/libdts.pc])
+    doc/Makefile src/Makefile libdca/Makefile libao/Makefile vc++/Makefile
+    debian/Makefile libdca/libdca.pc])
 AM_INIT_AUTOMAKE([1.5 dist-bzip2 no-dist-gzip check-news -Wall])
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
@@ -105,8 +105,8 @@ dnl Checks for libraries.
 AC_CHECK_LIB(m,cos,[
     LIBAO_LIBS="-lm"
     AC_SUBST([LIBAO_LIBS])
-    LIBDTS_LIBS="-lm"
-    AC_SUBST([LIBDTS_LIBS])
+    LIBDCA_LIBS="-lm"
+    AC_SUBST([LIBDCA_LIBS])
     COMPARE_LIBS="-lm"
     AC_SUBST([COMPARE_LIBS])
 ])
@@ -130,7 +130,7 @@ dnl Checks for library functions.
 AC_CHECK_FUNCS([memalign gettimeofday ftime])
 AC_TYPE_SIGNAL
 
-builtin([include],[libdts/configure.incl])
+builtin([include],[libdca/configure.incl])
 builtin([include],[libao/configure.incl])
 
 AC_ARG_ENABLE([warnings],

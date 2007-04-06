@@ -10,7 +10,4 @@ libdca_la_LDFLAGS = -no-undefined -version 0:0:0 -export-symbol-regex dts_.*
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdca.pc libdts.pc
 
-libdts.pc: libdca.pc
-	cp libdca.pc libdts.pc
-
 EXTRA_DIST = configure.incl

@@ -1,1 +1,1 @@
-EXTRA_DIST = config.h inttypes.h libdts.dsp libao.dsp dtsdec.dsp dtsdec.dsw
+EXTRA_DIST = config.h inttypes.h libdca.dsp libao.dsp dcadec.dsp dcadec.dsw

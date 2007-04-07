@@ -3,7 +3,7 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "libdts"=".\libdts.dsp" - Package Owner=<4>
+Project: "libdca"=".\libdca.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -27,7 +27,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "dtsdec"=".\dtsdec.dsp" - Package Owner=<4>
+Project: "dcadec"=".\dcadec.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -36,7 +36,7 @@ Package=<5>
 Package=<4>
 {{{
     Begin Project Dependency
-    Project_Dep_Name libdts
+    Project_Dep_Name libdca
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name libao

@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="libdts" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="libdca" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
 
-CFG=libdts - Win32 Debug
+CFG=libdca - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "libdts.mak".
+!MESSAGE NMAKE /f "libdca.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "libdts.mak" CFG="libdts - Win32 Debug"
+!MESSAGE NMAKE /f "libdca.mak" CFG="libdca - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "libdts - Win32 Release" (based on "Win32 (x86) Static Library")
-!MESSAGE "libdts - Win32 Debug" (based on "Win32 (x86) Static Library")
+!MESSAGE "libdca - Win32 Release" (based on "Win32 (x86) Static Library")
+!MESSAGE "libdca - Win32 Debug" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -28,7 +28,7 @@ CFG=libdts - Win32 Debug
 CPP=cl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "libdts - Win32 Release"
+!IF  "$(CFG)" == "libdca - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -51,7 +51,7 @@ LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
 
-!ELSEIF  "$(CFG)" == "libdts - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libdca - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -78,22 +78,22 @@ LIB32=link.exe -lib
 
 # Begin Target
 
-# Name "libdts - Win32 Release"
-# Name "libdts - Win32 Debug"
+# Name "libdca - Win32 Release"
+# Name "libdca - Win32 Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\libdts\bitstream.c
+SOURCE=..\libdca\bitstream.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\downmix.c
+SOURCE=..\libdca\downmix.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\parse.c
+SOURCE=..\libdca\parse.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -101,39 +101,39 @@ SOURCE=..\libdts\parse.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\include\dts.h
+SOURCE=..\include\dca.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\dts_internal.h
+SOURCE=..\libdca\dca_internal.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\bitstream.h
+SOURCE=..\libdca\bitstream.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\tables_adpcm.h
+SOURCE=..\libdca\tables_adpcm.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\tables_fir.h
+SOURCE=..\libdca\tables_fir.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\tables_huffman.h
+SOURCE=..\libdca\tables_huffman.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\tables_quantization.h
+SOURCE=..\libdca\tables_quantization.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\tables_vq.h
+SOURCE=..\libdca\tables_vq.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libdts\tables.h
+SOURCE=..\libdca\tables.h
 # End Source File
 # End Group
 # End Target

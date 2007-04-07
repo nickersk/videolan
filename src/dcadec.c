@@ -54,7 +54,7 @@ static int disable_adjust = 0;
 static float gain = 1;
 static ao_open_t * output_open = NULL;
 static ao_instance_t * output;
-static dts_state_t * state;
+static dca_state_t * state;
 static int sigint = 0;
 
 #ifdef HAVE_GETTIMEOFDAY

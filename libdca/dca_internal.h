@@ -29,7 +29,7 @@
 #define DTS_SUBSUBFAMES_MAX (4)
 #define DTS_LFE_MAX (3)
 
-struct dts_state_s {
+struct dca_state_s {
 
     /* Frame header */
     int frame_type;             /* type of the current frame */

@@ -25,7 +25,7 @@ DTS_LFE      : Low frequency effects channel. Normally used to connect a
 Initialization
 --------------
 
-dts_state_t * dts_init (uint32_t mm_accel);
+dca_state_t * dts_init (uint32_t mm_accel);
 
 Initializes the DTS library. Takes as a parameter the acceptable
 optimizations which may be used, such as MMX. These are found in the
@@ -75,7 +75,7 @@ well detect the kind of bitstream it is dealing with (big/little endian,
 Starting to decode a frame
 --------------------------
 
-int dts_frame (dts_state_t * state, uint8_t * buf, int * flags,
+int dts_frame (dca_state_t * state, uint8_t * buf, int * flags,
 	       sample_t * level, sample_t bias);
 
 This starts the work of decoding the DTS frame (to be completed using
@@ -139,7 +139,7 @@ reused next when decoding blocks.
 Dynamic range compression
 -------------------------
 
-void dts_dynrng (dts_state_t * state,
+void dts_dynrng (dca_state_t * state,
                  sample_t (* call) (sample_t, void *), void * data);
 
 This function is purely optional. If you dont call it, libdts will
@@ -167,7 +167,7 @@ if this is what you want.
 Finding the number of blocks
 ----------------------------
 
-int dts_blocks_num (dts_state_t * state);
+int dts_blocks_num (dca_state_t * state);
 
 Every DTS frame is composed of a variable number of blocks. Calling
 dts_blocks_num() after dts_frame() will give you the number of blocks in the
@@ -176,7 +176,7 @@ current frame.
 Decoding blocks
 ---------------
 
-int dts_block (dts_state_t * state);
+int dts_block (dca_state_t * state);
 
 Every DTS frame is composed of a variable number of blocks, each with an
 output of 256 samples for each channel. The dts_block() function decodes
@@ -186,7 +186,7 @@ decode all of the audio in the frame.
 Getting the decoded audio samples
 ---------------------------------
 
-sample_t * dts_samples (dts_state_t * state);
+sample_t * dts_samples (dca_state_t * state);
 
 After each call to dts_block(), you should extract the audio data from the
 internal samples buffer.
@@ -203,7 +203,7 @@ libdts does not leave an empty space between channels.
 Pseudocode example
 ------------------
 
-dts_state_t * state = dts_init (mm_accel());
+dca_state_t * state = dts_init (mm_accel());
 
 loop on input bytes:
   if at least 14 bytes in the buffer:

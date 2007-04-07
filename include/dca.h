@@ -41,7 +41,7 @@ typedef float sample_t;
 typedef float level_t;
 #endif
 
-typedef struct dts_state_s dts_state_t;
+typedef struct dca_state_s dca_state_t;
 
 #define DTS_MONO 0
 #define DTS_CHANNEL 1
@@ -64,22 +64,22 @@ typedef struct dts_state_s dts_state_t;
 #define DTS_LFE 0x80
 #define DTS_ADJUST_LEVEL 0x100
 
-dts_state_t * dts_init (uint32_t mm_accel);
+dca_state_t * dts_init (uint32_t mm_accel);
 
-int dts_syncinfo (dts_state_t *state, uint8_t * buf, int * flags,
+int dts_syncinfo (dca_state_t *state, uint8_t * buf, int * flags,
                   int * sample_rate, int * bit_rate, int *frame_length);
 
-int dts_frame (dts_state_t * state, uint8_t * buf, int * flags,
+int dts_frame (dca_state_t * state, uint8_t * buf, int * flags,
                level_t * level, sample_t bias);
 
-void dts_dynrng (dts_state_t * state,
+void dts_dynrng (dca_state_t * state,
                  level_t (* call) (level_t, void *), void * data);
 
-int dts_blocks_num (dts_state_t * state);
-int dts_block (dts_state_t * state);
+int dts_blocks_num (dca_state_t * state);
+int dts_block (dca_state_t * state);
 
-sample_t * dts_samples (dts_state_t * state);
+sample_t * dts_samples (dca_state_t * state);
 
-void dts_free (dts_state_t * state);
+void dts_free (dca_state_t * state);
 
 #endif /* LIBDCA_DCA_H */

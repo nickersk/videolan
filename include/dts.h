@@ -21,3 +21,5 @@
  */
 
 #include <dca.h>
+
+typedef struct dca_state_s dts_state_t;

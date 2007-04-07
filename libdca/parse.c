@@ -57,7 +57,7 @@ void * memalign (size_t align, size_t size);
 
 static int decode_blockcode (int code, int levels, int *values);
 
-static void qmf_32_subbands (dts_state_t * state, int chans,
+static void qmf_32_subbands (dca_state_t * state, int chans,
                              double samples_in[32][8], sample_t *samples_out,
                              double rScale, sample_t bias);
 
@@ -65,18 +65,18 @@ static void lfe_interpolation_fir (int nDecimationSelect, int nNumDeciSample,
                                    double *samples_in, sample_t *samples_out,
                                    double rScale, sample_t bias );
 
-static void pre_calc_cosmod( dts_state_t * state );
+static void pre_calc_cosmod( dca_state_t * state );
 
-dts_state_t * dts_init (uint32_t mm_accel)
+dca_state_t * dts_init (uint32_t mm_accel)
 {
-    dts_state_t * state;
+    dca_state_t * state;
     int i;
 
-    state = (dts_state_t *) malloc (sizeof (dts_state_t));
+    state = (dca_state_t *) malloc (sizeof (dca_state_t));
     if (state == NULL)
         return NULL;
 
-    memset (state, 0, sizeof(dts_state_t));
+    memset (state, 0, sizeof(dca_state_t));
 
     state->samples = (sample_t *) memalign (16, 256 * 12 * sizeof (sample_t));
     if (state->samples == NULL) {
@@ -95,18 +95,18 @@ dts_state_t * dts_init (uint32_t mm_accel)
     return state;
 }
 
-sample_t * dts_samples (dts_state_t * state)
+sample_t * dts_samples (dca_state_t * state)
 {
     return state->samples;
 }
 
-int dts_blocks_num (dts_state_t * state)
+int dts_blocks_num (dca_state_t * state)
 {
     /* 8 samples per subsubframe and per subband */
     return state->sample_blocks / 8;
 }
 
-static int syncinfo (dts_state_t * state, int * flags,
+static int syncinfo (dca_state_t * state, int * flags,
                      int * sample_rate, int * bit_rate, int * frame_length)
 {
     int frame_size;
@@ -148,7 +148,7 @@ static int syncinfo (dts_state_t * state, int * flags,
     return frame_size;
 }
 
-int dts_syncinfo (dts_state_t * state, uint8_t * buf, int * flags,
+int dts_syncinfo (dca_state_t * state, uint8_t * buf, int * flags,
                   int * sample_rate, int * bit_rate, int * frame_length)
 {
     /*
@@ -204,7 +204,7 @@ int dts_syncinfo (dts_state_t * state, uint8_t * buf, int * flags,
     return 0;
 }
 
-int dts_frame (dts_state_t * state, uint8_t * buf, int * flags,
+int dts_frame (dca_state_t * state, uint8_t * buf, int * flags,
                level_t * level, sample_t bias)
 {
     int i, j;
@@ -440,7 +440,7 @@ int dts_frame (dts_state_t * state, uint8_t * buf, int * flags,
     return 0;
 }
 
-static int dts_subframe_header (dts_state_t * state)
+static int dts_subframe_header (dca_state_t * state)
 {
     /* Primary audio coding side information */
     int j, k;
@@ -754,7 +754,7 @@ static int dts_subframe_header (dts_state_t * state)
     return 0;
 }
 
-static int dts_subsubframe (dts_state_t * state)
+static int dts_subsubframe (dca_state_t * state)
 {
     int k, l;
     int subsubframe = state->current_subsubframe;
@@ -1017,7 +1017,7 @@ static int dts_subsubframe (dts_state_t * state)
     return 0;
 }
 
-static int dts_subframe_footer (dts_state_t * state)
+static int dts_subframe_footer (dca_state_t * state)
 {
     int aux_data_count = 0, i;
     int lfe_samples;
@@ -1054,7 +1054,7 @@ static int dts_subframe_footer (dts_state_t * state)
     return 0;
 }
 
-int dts_block (dts_state_t * state)
+int dts_block (dca_state_t * state)
 {
     /* Sanity check */
     if (state->current_subframe >= state->subframes)
@@ -1120,7 +1120,7 @@ int decode_blockcode( int code, int levels, int *values )
     }
 }
 
-static void pre_calc_cosmod( dts_state_t * state )
+static void pre_calc_cosmod( dca_state_t * state )
 {
     int i, j, k;
 
@@ -1139,7 +1139,7 @@ static void pre_calc_cosmod( dts_state_t * state )
         state->cos_mod[j++] = -0.25/(2.0*sin((2*k+1)*M_PI/128));
 }
 
-static void qmf_32_subbands (dts_state_t * state, int chans,
+static void qmf_32_subbands (dca_state_t * state, int chans,
                              double samples_in[32][8], sample_t *samples_out,
                              double scale, sample_t bias)
 {
@@ -1272,7 +1272,7 @@ static void lfe_interpolation_fir (int nDecimationSelect, int nNumDeciSample,
     }
 }
 
-void dts_dynrng (dts_state_t * state,
+void dts_dynrng (dca_state_t * state,
                  level_t (* call) (level_t, void *), void * data)
 {
     state->dynrange = 0;
@@ -1283,7 +1283,7 @@ void dts_dynrng (dts_state_t * state,
     }
 }
 
-void dts_free (dts_state_t * state)
+void dts_free (dca_state_t * state)
 {
     free (state->samples);
     free (state);

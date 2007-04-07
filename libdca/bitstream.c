@@ -32,7 +32,7 @@
 
 #define BUFFER_SIZE 4096
 
-void dts_bitstream_init (dts_state_t * state, uint8_t * buf, int word_mode,
+void dts_bitstream_init (dca_state_t * state, uint8_t * buf, int word_mode,
                          int bigendian_mode)
 {
     intptr_t align;
@@ -46,7 +46,7 @@ void dts_bitstream_init (dts_state_t * state, uint8_t * buf, int word_mode,
     bitstream_get (state, align * 8);
 }
 #include<stdio.h>
-static inline void bitstream_fill_current (dts_state_t * state)
+static inline void bitstream_fill_current (dca_state_t * state)
 {
     uint32_t tmp;
 
@@ -73,7 +73,7 @@ static inline void bitstream_fill_current (dts_state_t * state)
  * -ah
  */
 
-uint32_t dts_bitstream_get_bh (dts_state_t * state, uint32_t num_bits)
+uint32_t dts_bitstream_get_bh (dca_state_t * state, uint32_t num_bits)
 {
     uint32_t result;
 

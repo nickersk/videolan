@@ -75,7 +75,7 @@ static int win_play (ao_instance_t * _instance, int flags, sample_t * _samples)
     int current_buffer;
     MMRESULT result;
 
-#ifdef LIBDTS_DOUBLE
+#ifdef LIBDCA_DOUBLE
     convert_t samples[256 * 2];
     int i;
 

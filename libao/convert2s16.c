@@ -32,7 +32,7 @@
 
 static inline int16_t convert (int32_t i)
 {
-#ifdef LIBDTS_FIXED
+#ifdef LIBDCA_FIXED
     i >>= 15;
 #else
     i -= 0x43c00000;

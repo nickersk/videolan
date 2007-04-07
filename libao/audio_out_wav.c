@@ -193,7 +193,7 @@ static int wav_play (ao_instance_t * _instance, int flags, sample_t * _samples)
       { 2, 0, 1, 4, 5, 3 },       /* DTS_3F2R */
     };
 
-#ifdef LIBDTS_DOUBLE
+#ifdef LIBDCA_DOUBLE
     convert_t samples[256 * 6];
     int i;
 

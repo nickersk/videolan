@@ -43,13 +43,13 @@ static int float_setup (ao_instance_t * instance, int sample_rate, int * flags,
 static int float_play (ao_instance_t * instance, int flags,
 		       sample_t * _samples)
 {
-#if defined(LIBDTS_FIXED)
+#if defined(LIBDCA_FIXED)
     float samples[256 * 2];
     int i;
     
     for (i = 0; i < 256 * 2; i++)
       samples[i] = _samples[i] * (1.0 / (1 << 30));
-#elif defined(LIBDTS_DOUBLE)
+#elif defined(LIBDCA_DOUBLE)
     float samples[256 * 2];
     int i;
 

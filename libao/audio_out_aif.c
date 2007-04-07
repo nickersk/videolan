@@ -82,7 +82,7 @@ static int aif_play (ao_instance_t * _instance, int flags, sample_t * _samples)
     aif_instance_t * instance = (aif_instance_t *) _instance;
     int16_t int16_samples[256*2];
 
-#ifdef LIBDTS_DOUBLE
+#ifdef LIBDCA_DOUBLE
     convert_t samples[256 * 2];
     int i;
 

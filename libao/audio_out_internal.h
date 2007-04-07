@@ -21,13 +21,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef LIBDTS_DOUBLE
+#ifdef LIBDCA_DOUBLE
 typedef float convert_t;
 #else
 typedef sample_t convert_t;
 #endif
 
-#ifdef LIBDTS_FIXED
+#ifdef LIBDCA_FIXED
 #define CONVERT_LEVEL (1 << 26)
 #define CONVERT_BIAS 0
 #else

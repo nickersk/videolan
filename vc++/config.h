@@ -1,7 +1,7 @@
 /* vc++/config.h - manually adapted from include/config.h.in */
 
-/* dtsdec profiling */
-/* #undef DTSDEC_GPROF */
+/* dcadec profiling */
+/* #undef DCADEC_GPROF */
 
 /* maximum supported data alignment */
 /* #undef ATTRIBUTE_ALIGNED_MAX */
@@ -66,11 +66,11 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 /* #undef HAVE_UNISTD_H */
 
-/* dts sample precision */
-/* #undef LIBDTS_DOUBLE */
+/* dca sample precision */
+/* #undef LIBDCA_DOUBLE */
 
 /* use fixed-point arithmetic */
-/* #undef LIBDTS_FIXED */
+/* #undef LIBDCA_FIXED */
 
 /* libao al support */
 /* #undef LIBAO_AL */
@@ -85,7 +85,7 @@
 #define LIBAO_WIN
 
 /* Name of package */
-#define PACKAGE "dtsdec"
+#define PACKAGE "libdca"
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT ""

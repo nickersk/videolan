@@ -64,7 +64,7 @@ static int al_play (ao_instance_t * _instance, int flags, sample_t * _samples)
     int16_t int16_samples[256*6];
     int chans = -1;
 
-#ifdef LIBDTS_DOUBLE
+#ifdef LIBDCA_DOUBLE
     convert_t samples[256 * 6];
     int i;
 

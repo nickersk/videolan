@@ -30,10 +30,10 @@
 
 uint32_t mm_accel (void);
 
-#if defined(LIBDTS_FIXED)
+#if defined(LIBDCA_FIXED)
 typedef int32_t sample_t;
 typedef int32_t level_t;
-#elif defined(LIBDTS_DOUBLE)
+#elif defined(LIBDCA_DOUBLE)
 typedef double sample_t;
 typedef double level_t;
 #else

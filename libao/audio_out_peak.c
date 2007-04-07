@@ -33,7 +33,7 @@ static int peak_play (ao_instance_t * _instance, int flags, sample_t * samples)
     int i;
 
     for (i = 0; i < 256 * 2; i++) {
-#ifdef LIBDTS_FIXED
+#ifdef LIBDCA_FIXED
 	float f = fabs (samples[i] * (1.0 / (1 << 30)));
 #else
 	float f = fabs (samples[i]);

@@ -67,7 +67,7 @@ static int solaris_play (ao_instance_t * _instance, int flags,
     solaris_instance_t * instance = (solaris_instance_t *) _instance;
     int16_t int16_samples[256*2];
 
-#ifdef LIBDTS_DOUBLE
+#ifdef LIBDCA_DOUBLE
     convert_t samples[256 * 2];
     int i;
 

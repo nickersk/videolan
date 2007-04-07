@@ -164,7 +164,7 @@ void dts_upmix (sample_t * samples, int acmod, int output);
 
 #define ROUND(x) ((int)((x) + ((x) > 0 ? 0.5 : -0.5)))
 
-#ifndef LIBDTS_FIXED
+#ifndef LIBDCA_FIXED
 
 typedef sample_t quantizer_t;
 #define SAMPLE(x) (x)
@@ -175,7 +175,7 @@ typedef sample_t quantizer_t;
 #define DIV(a,b) ((a) / (b))
 #define BIAS(x) ((x) + bias)
 
-#else /* LIBDTS_FIXED */
+#else /* LIBDCA_FIXED */
 
 typedef int16_t quantizer_t;
 #define SAMPLE(x) (sample_t)((x) * (1 << 30))

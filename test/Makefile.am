@@ -1,4 +1,4 @@
-AM_CFLAGS = $(DTSDEC_CFLAGS)
+AM_CFLAGS = $(DCADEC_CFLAGS)
 
 noinst_PROGRAMS = compare
 compare_SOURCES = compare.c

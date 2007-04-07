@@ -20,6 +20,26 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <dca.h>
+#ifndef LIBDCA_COMPAT_H
+# define LIBDCA_COMPAT_H 1
+# include <dca.h>
 
 typedef struct dca_state_s dts_state_t;
+# define DTS_MONO DCA_MONO
+# define DTS_CHANNEL DCA_CHANNEL
+# define DTS_STEREO DCA_STEREO
+# define DTS_STEREO_SUMDIFF DCA_STEREO_SUMDIFF
+# define DTS_STEREO_TOTAL DCA_STEREO_TOTAL
+# define DTS_3F DCA_3F
+# define DTS_2F1R DCA_2F1R
+# define DTS_3F1R DCA_3F1R
+# define DTS_2F2R DCA_2F2R
+# define DTS_3F2R DCA_3F2R
+# define DTS_4F2R DCA_4F2R
+# define DTS_DOLBY DCA_DOLBY
+# define DTS_CHANNEL_MAX DCA_CHANNEL_MAX
+# define DTS_CHANNEL_BITS DCA_CHANNEL_BITS
+# define DTS_CHANNEL_MASK DCA_CHANNEL_MASK
+# define DTS_LFE DCA_LFE
+# define DTS_ADJUST_LEVEL DCA_ADJUST_LEVEL
+#endif

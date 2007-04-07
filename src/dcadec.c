@@ -286,7 +286,7 @@ void dts_decode_data (uint8_t * start, uint8_t * end)
 		if (output->setup (output, sample_rate, &flags, &level, &bias))
 		    goto error;
 		if (!disable_adjust)
-		    flags |= DTS_ADJUST_LEVEL;
+		    flags |= DCA_ADJUST_LEVEL;
 		level = (level_t) (level * gain);
 		if (dts_frame (state, buf, &flags, &level, bias))
 		    goto error;

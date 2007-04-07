@@ -43,26 +43,26 @@ typedef float level_t;
 
 typedef struct dca_state_s dca_state_t;
 
-#define DTS_MONO 0
-#define DTS_CHANNEL 1
-#define DTS_STEREO 2
-#define DTS_STEREO_SUMDIFF 3
-#define DTS_STEREO_TOTAL 4
-#define DTS_3F 5
-#define DTS_2F1R 6
-#define DTS_3F1R 7
-#define DTS_2F2R 8
-#define DTS_3F2R 9
-#define DTS_4F2R 10
+#define DCA_MONO 0
+#define DCA_CHANNEL 1
+#define DCA_STEREO 2
+#define DCA_STEREO_SUMDIFF 3
+#define DCA_STEREO_TOTAL 4
+#define DCA_3F 5
+#define DCA_2F1R 6
+#define DCA_3F1R 7
+#define DCA_2F2R 8
+#define DCA_3F2R 9
+#define DCA_4F2R 10
 
-#define DTS_DOLBY 101 /* FIXME */
+#define DCA_DOLBY 101 /* FIXME */
 
-#define DTS_CHANNEL_MAX  DTS_3F2R /* We don't handle anything above that */
-#define DTS_CHANNEL_BITS 6
-#define DTS_CHANNEL_MASK 0x3F
+#define DCA_CHANNEL_MAX  DCA_3F2R /* We don't handle anything above that */
+#define DCA_CHANNEL_BITS 6
+#define DCA_CHANNEL_MASK 0x3F
 
-#define DTS_LFE 0x80
-#define DTS_ADJUST_LEVEL 0x100
+#define DCA_LFE 0x80
+#define DCA_ADJUST_LEVEL 0x100
 
 dca_state_t * dts_init (uint32_t mm_accel);
 

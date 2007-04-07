@@ -59,21 +59,21 @@ static null_instance_t instance = {{null_setup, null_play, null_close}, 0};
 
 ao_instance_t * ao_null_open (void)
 {
-    instance.channels = DTS_STEREO;
+    instance.channels = DCA_STEREO;
 
     return (ao_instance_t *) &instance;
 }
 
 ao_instance_t * ao_null4_open (void)
 {
-    instance.channels = DTS_2F2R;
+    instance.channels = DCA_2F2R;
 
     return (ao_instance_t *) &instance;
 }
 
 ao_instance_t * ao_null6_open (void)
 {
-    instance.channels = DTS_3F2R | DTS_LFE;
+    instance.channels = DCA_3F2R | DCA_LFE;
 
     return (ao_instance_t *) &instance;
 }

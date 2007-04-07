@@ -75,7 +75,7 @@ static int al_play (ao_instance_t * _instance, int flags, sample_t * _samples)
 #endif
 
     chans = channels_multi (flags);
-    flags &= DTS_CHANNEL_MASK | DTS_LFE;
+    flags &= DCA_CHANNEL_MASK | DCA_LFE;
 
     if (instance->set_params) {
 	ALconfig config;
@@ -107,12 +107,12 @@ static int al_play (ao_instance_t * _instance, int flags, sample_t * _samples)
 
 	instance->flags = flags;
 	instance->set_params = 0;
-    } else if ((flags == DTS_DOLBY) && (instance->flags == DTS_STEREO)) {
+    } else if ((flags == DCA_DOLBY) && (instance->flags == DCA_STEREO)) {
 	fprintf (stderr, "Switching from stereo to dolby surround\n");
-	instance->flags = DTS_DOLBY;
-    } else if ((flags == DTS_STEREO) && (instance->flags == DTS_DOLBY)) {
+	instance->flags = DCA_DOLBY;
+    } else if ((flags == DCA_STEREO) && (instance->flags == DCA_DOLBY)) {
 	fprintf (stderr, "Switching from dolby surround to stereo\n");
-	instance->flags = DTS_STEREO;
+	instance->flags = DCA_STEREO;
     } else if (flags != instance->flags)
 	return 1;
 
@@ -158,22 +158,22 @@ static ao_instance_t * al_open (int flags)
 
 ao_instance_t * ao_al_open (void)
 {
-    return al_open (DTS_STEREO);
+    return al_open (DCA_STEREO);
 }
 
 ao_instance_t * ao_aldolby_open (void)
 {
-    return al_open (DTS_DOLBY);
+    return al_open (DCA_DOLBY);
 }
 
 ao_instance_t * ao_al4_open (void)
 {
-    return al_open (DTS_2F2R);
+    return al_open (DCA_2F2R);
 }
 
 ao_instance_t * ao_al6_open (void)
 {
-    return al_open (DTS_3F2R | DTS_LFE);
+    return al_open (DCA_3F2R | DCA_LFE);
 }
 
 #endif

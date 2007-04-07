@@ -72,10 +72,10 @@ static ao_instance_t * peak_open (int flags)
 
 ao_instance_t * ao_peak_open (void)
 {
-    return peak_open (DTS_STEREO);
+    return peak_open (DCA_STEREO);
 }
 
 ao_instance_t * ao_peakdolby_open (void)
 {
-    return peak_open (DTS_DOLBY);
+    return peak_open (DCA_DOLBY);
 }

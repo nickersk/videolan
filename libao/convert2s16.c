@@ -102,11 +102,11 @@ void convert2s16_5 (convert_t * _f, int16_t * s16)
 
 int channels_multi (int flags)
 {
-    if (flags & DTS_LFE)
+    if (flags & DCA_LFE)
 	return 6;
     else if (flags & 1)	/* center channel */
 	return 5;
-    else if ((flags & DTS_CHANNEL_MASK) == DTS_2F2R)
+    else if ((flags & DCA_CHANNEL_MASK) == DCA_2F2R)
 	return 4;
     else
 	return 2;
@@ -118,18 +118,18 @@ void convert2s16_multi (convert_t * _f, int16_t * s16, int flags)
     int32_t * f = (int32_t *) _f;
 
     switch (flags) {
-    case DTS_MONO:
+    case DCA_MONO:
 	for (i = 0; i < 256; i++) {
 	    s16[5*i] = s16[5*i+1] = s16[5*i+2] = s16[5*i+3] = 0;
 	    s16[5*i+4] = convert (f[i]);
 	}
 	break;
-    case DTS_CHANNEL:
-    case DTS_STEREO:
-    case DTS_DOLBY:
+    case DCA_CHANNEL:
+    case DCA_STEREO:
+    case DCA_DOLBY:
 	convert2s16_2 (_f, s16);
 	break;
-    case DTS_3F:
+    case DCA_3F:
 	for (i = 0; i < 256; i++) {
 	    s16[5*i] = convert (f[i]);
 	    s16[5*i+1] = convert (f[i+512]);
@@ -137,22 +137,22 @@ void convert2s16_multi (convert_t * _f, int16_t * s16, int flags)
 	    s16[5*i+4] = convert (f[i+256]);
 	}
 	break;
-    case DTS_2F2R:
+    case DCA_2F2R:
 	convert2s16_4 (_f, s16);
 	break;
-    case DTS_3F2R:
+    case DCA_3F2R:
 	convert2s16_5 (_f, s16);
 	break;
-    case DTS_MONO | DTS_LFE:
+    case DCA_MONO | DCA_LFE:
 	for (i = 0; i < 256; i++) {
 	    s16[6*i] = s16[6*i+1] = s16[6*i+2] = s16[6*i+3] = 0;
 	    s16[6*i+4] = convert (f[i+256]);
 	    s16[6*i+5] = convert (f[i]);
 	}
 	break;
-    case DTS_CHANNEL | DTS_LFE:
-    case DTS_STEREO | DTS_LFE:
-    case DTS_DOLBY | DTS_LFE:
+    case DCA_CHANNEL | DCA_LFE:
+    case DCA_STEREO | DCA_LFE:
+    case DCA_DOLBY | DCA_LFE:
 	for (i = 0; i < 256; i++) {
 	    s16[6*i] = convert (f[i+256]);
 	    s16[6*i+1] = convert (f[i+512]);
@@ -160,7 +160,7 @@ void convert2s16_multi (convert_t * _f, int16_t * s16, int flags)
 	    s16[6*i+5] = convert (f[i]);
 	}
 	break;
-    case DTS_3F | DTS_LFE:
+    case DCA_3F | DCA_LFE:
 	for (i = 0; i < 256; i++) {
 	    s16[6*i] = convert (f[i+256]);
 	    s16[6*i+1] = convert (f[i+768]);
@@ -169,7 +169,7 @@ void convert2s16_multi (convert_t * _f, int16_t * s16, int flags)
 	    s16[6*i+5] = convert (f[i]);
 	}
 	break;
-    case DTS_2F2R | DTS_LFE:
+    case DCA_2F2R | DCA_LFE:
 	for (i = 0; i < 256; i++) {
 	    s16[6*i] = convert (f[i+256]);
 	    s16[6*i+1] = convert (f[i+512]);
@@ -179,7 +179,7 @@ void convert2s16_multi (convert_t * _f, int16_t * s16, int flags)
 	    s16[6*i+5] = convert (f[i]);
 	}
 	break;
-    case DTS_3F2R | DTS_LFE:
+    case DCA_3F2R | DCA_LFE:
 	for (i = 0; i < 256; i++) {
 	    s16[6*i] = convert (f[i+256]);
 	    s16[6*i+1] = convert (f[i+768]);

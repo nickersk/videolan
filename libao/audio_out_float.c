@@ -33,7 +33,7 @@
 static int float_setup (ao_instance_t * instance, int sample_rate, int * flags,
 			level_t * level, sample_t * bias)
 {
-    *flags = DTS_STEREO;
+    *flags = DCA_STEREO;
     *level = CONVERT_LEVEL;
     *bias = 0;
 

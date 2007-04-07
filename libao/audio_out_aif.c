@@ -142,10 +142,10 @@ static ao_instance_t * aif_open (int flags)
 
 ao_instance_t * ao_aif_open (void)
 {
-    return aif_open (DTS_STEREO);
+    return aif_open (DCA_STEREO);
 }
 
 ao_instance_t * ao_aifdolby_open (void)
 {
-    return aif_open (DTS_DOLBY);
+    return aif_open (DCA_DOLBY);
 }

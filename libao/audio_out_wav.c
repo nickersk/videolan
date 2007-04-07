@@ -99,7 +99,7 @@ static int wav_setup (ao_instance_t * _instance, int sample_rate, int * flags,
     *level = CONVERT_LEVEL;
     *bias = 0;
 
-    if( instance->flags == DTS_STEREO );
+    if( instance->flags == DCA_STEREO );
         *bias = CONVERT_BIAS;
 
     return 0;
@@ -143,10 +143,10 @@ static int wav_channels (int flags, uint32_t * speaker_flags)
     };
     int chans;
 
-    *speaker_flags = speaker_tbl[flags & DTS_CHANNEL_MASK];
-    chans = nfchans_tbl[flags & DTS_CHANNEL_MASK];
+    *speaker_flags = speaker_tbl[flags & DCA_CHANNEL_MASK];
+    chans = nfchans_tbl[flags & DCA_CHANNEL_MASK];
 
-    if (flags & DTS_LFE) {
+    if (flags & DCA_LFE) {
         *speaker_flags |= SPEAKER_LOW_FREQUENCY;
         chans++;
     }
@@ -169,28 +169,28 @@ static int wav_play (ao_instance_t * _instance, int flags, sample_t * _samples)
     uint32_t speaker_flags;
 
     static const int chan_map[10][6] =
-    { { 0, 0, 0, 0, 0, 0 },       /* DTS_MONO */
-      { 0, 1, 0, 0, 0, 0 },       /* DTS_CHANNEL */
-      { 0, 1, 0, 0, 0, 0 },       /* DTS_STEREO */
-      { 0, 1, 0, 0, 0, 0 },       /* DTS_STEREO_SUMDIFF */
-      { 0, 1, 0, 0, 0, 0 },       /* DTS_STEREO_TOTAL */
-      { 2, 0, 1, 0, 0, 0 },       /* DTS_3F */
-      { 0, 1, 2, 0, 0, 0 },       /* DTS_2F1R */
-      { 2, 0, 1, 3, 0, 0 },       /* DTS_3F1R */
-      { 0, 1, 2, 3, 0, 0 },       /* DTS_2F2R */
-      { 2, 0, 1, 3, 4, 0 },       /* DTS_3F2R */
+    { { 0, 0, 0, 0, 0, 0 },       /* DCA_MONO */
+      { 0, 1, 0, 0, 0, 0 },       /* DCA_CHANNEL */
+      { 0, 1, 0, 0, 0, 0 },       /* DCA_STEREO */
+      { 0, 1, 0, 0, 0, 0 },       /* DCA_STEREO_SUMDIFF */
+      { 0, 1, 0, 0, 0, 0 },       /* DCA_STEREO_TOTAL */
+      { 2, 0, 1, 0, 0, 0 },       /* DCA_3F */
+      { 0, 1, 2, 0, 0, 0 },       /* DCA_2F1R */
+      { 2, 0, 1, 3, 0, 0 },       /* DCA_3F1R */
+      { 0, 1, 2, 3, 0, 0 },       /* DCA_2F2R */
+      { 2, 0, 1, 3, 4, 0 },       /* DCA_3F2R */
     };
     static const int chan_map_lfe[10][6] =
-    { { 0, 1, 0, 0, 0, 0 },       /* DTS_MONO */
-      { 0, 1, 2, 0, 0, 0 },       /* DTS_CHANNEL */
-      { 0, 1, 2, 0, 0, 0 },       /* DTS_STEREO */
-      { 0, 1, 2, 0, 0, 0 },       /* DTS_STEREO_SUMDIFF */
-      { 0, 1, 2, 0, 0, 0 },       /* DTS_STEREO_TOTAL */
-      { 2, 0, 1, 3, 0, 0 },       /* DTS_3F */
-      { 0, 1, 3, 2, 0, 0 },       /* DTS_2F1R */
-      { 2, 0, 1, 4, 3, 0 },       /* DTS_3F1R */
-      { 0, 1, 3, 4, 2, 0 },       /* DTS_2F2R */
-      { 2, 0, 1, 4, 5, 3 },       /* DTS_3F2R */
+    { { 0, 1, 0, 0, 0, 0 },       /* DCA_MONO */
+      { 0, 1, 2, 0, 0, 0 },       /* DCA_CHANNEL */
+      { 0, 1, 2, 0, 0, 0 },       /* DCA_STEREO */
+      { 0, 1, 2, 0, 0, 0 },       /* DCA_STEREO_SUMDIFF */
+      { 0, 1, 2, 0, 0, 0 },       /* DCA_STEREO_TOTAL */
+      { 2, 0, 1, 3, 0, 0 },       /* DCA_3F */
+      { 0, 1, 3, 2, 0, 0 },       /* DCA_2F1R */
+      { 2, 0, 1, 4, 3, 0 },       /* DCA_3F1R */
+      { 0, 1, 3, 4, 2, 0 },       /* DCA_2F2R */
+      { 2, 0, 1, 4, 5, 3 },       /* DCA_3F2R */
     };
 
 #ifdef LIBDCA_DOUBLE
@@ -233,9 +233,9 @@ static int wav_play (ao_instance_t * _instance, int flags, sample_t * _samples)
     } else {
         int i, j;
 
-        if (flags & DTS_LFE)
+        if (flags & DCA_LFE)
         {
-            flags &= ~DTS_LFE;
+            flags &= ~DCA_LFE;
             for (j = 0; j < chans; j++)
                 for (i = 0; i < 256; i++)
                   ordered_samples.floats[i * chans + chan_map_lfe[flags][j]] =
@@ -297,17 +297,17 @@ static ao_instance_t * wav_open (int flags)
 
 ao_instance_t * ao_wav_open (void)
 {
-    return wav_open (DTS_STEREO);
+    return wav_open (DCA_STEREO);
 }
 
 ao_instance_t * ao_wavdolby_open (void)
 {
-    return wav_open (DTS_DOLBY);
+    return wav_open (DCA_DOLBY);
 }
 
 ao_instance_t * ao_wav6_open (void)
 {
-    return wav_open (DTS_3F2R|DTS_LFE);
+    return wav_open (DCA_3F2R|DCA_LFE);
 }
 
 ao_instance_t * ao_wavall_open (void)

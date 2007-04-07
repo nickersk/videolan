@@ -22,12 +22,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define DTS_SUBFRAMES_MAX (16)
-#define DTS_PRIM_CHANNELS_MAX (5)
-#define DTS_SUBBANDS (32)
-#define DTS_ABITS_MAX (32) /* Should be 28 */
-#define DTS_SUBSUBFAMES_MAX (4)
-#define DTS_LFE_MAX (3)
+#define DCA_SUBFRAMES_MAX (16)
+#define DCA_PRIM_CHANNELS_MAX (5)
+#define DCA_SUBBANDS (32)
+#define DCA_ABITS_MAX (32) /* Should be 28 */
+#define DCA_SUBSUBFAMES_MAX (4)
+#define DCA_LFE_MAX (3)
 
 struct dca_state_s {
 
@@ -64,55 +64,55 @@ struct dca_state_s {
     int subframes;              /* number of subframes */
     int prim_channels;          /* number of primary audio channels */
     /* subband activity count */
-    int subband_activity[DTS_PRIM_CHANNELS_MAX];
+    int subband_activity[DCA_PRIM_CHANNELS_MAX];
     /* high frequency vq start subband */
-    int vq_start_subband[DTS_PRIM_CHANNELS_MAX];
+    int vq_start_subband[DCA_PRIM_CHANNELS_MAX];
     /* joint intensity coding index */
-    int joint_intensity[DTS_PRIM_CHANNELS_MAX];
+    int joint_intensity[DCA_PRIM_CHANNELS_MAX];
     /* transient mode code book */
-    int transient_huffman[DTS_PRIM_CHANNELS_MAX];
+    int transient_huffman[DCA_PRIM_CHANNELS_MAX];
     /* scale factor code book */
-    int scalefactor_huffman[DTS_PRIM_CHANNELS_MAX];
+    int scalefactor_huffman[DCA_PRIM_CHANNELS_MAX];
     /* bit allocation quantizer select */
-    int bitalloc_huffman[DTS_PRIM_CHANNELS_MAX];
+    int bitalloc_huffman[DCA_PRIM_CHANNELS_MAX];
     /* quantization index codebook select */
-    int quant_index_huffman[DTS_PRIM_CHANNELS_MAX][DTS_ABITS_MAX];
+    int quant_index_huffman[DCA_PRIM_CHANNELS_MAX][DCA_ABITS_MAX];
     /* scale factor adjustment */
-    float scalefactor_adj[DTS_PRIM_CHANNELS_MAX][DTS_ABITS_MAX];
+    float scalefactor_adj[DCA_PRIM_CHANNELS_MAX][DCA_ABITS_MAX];
 
     /* Primary audio coding side information */
     int subsubframes;           /* number of subsubframes */
     int partial_samples;        /* partial subsubframe samples count */
     /* prediction mode (ADPCM used or not) */
-    int prediction_mode[DTS_PRIM_CHANNELS_MAX][DTS_SUBBANDS];
+    int prediction_mode[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS];
     /* prediction VQ coefs */
-    int prediction_vq[DTS_PRIM_CHANNELS_MAX][DTS_SUBBANDS];
+    int prediction_vq[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS];
     /* bit allocation index */
-    int bitalloc[DTS_PRIM_CHANNELS_MAX][DTS_SUBBANDS];
+    int bitalloc[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS];
     /* transition mode (transients) */
-    int transition_mode[DTS_PRIM_CHANNELS_MAX][DTS_SUBBANDS];
+    int transition_mode[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS];
     /* scale factors (2 if transient)*/
-    int scale_factor[DTS_PRIM_CHANNELS_MAX][DTS_SUBBANDS][2];
+    int scale_factor[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS][2];
     /* joint subband scale factors codebook */
-    int joint_huff[DTS_PRIM_CHANNELS_MAX];
+    int joint_huff[DCA_PRIM_CHANNELS_MAX];
     /* joint subband scale factors */
-    int joint_scale_factor[DTS_PRIM_CHANNELS_MAX][DTS_SUBBANDS];
+    int joint_scale_factor[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS];
     /* stereo downmix coefficients */
-    int downmix_coef[DTS_PRIM_CHANNELS_MAX][2];
+    int downmix_coef[DCA_PRIM_CHANNELS_MAX][2];
     /* dynamic range coefficient */
     int dynrange_coef;
 
     /* VQ encoded high frequency subbands */
-    int high_freq_vq[DTS_PRIM_CHANNELS_MAX][DTS_SUBBANDS];
+    int high_freq_vq[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS];
 
     /* Low frequency effect data */
-    double lfe_data[2*DTS_SUBSUBFAMES_MAX*DTS_LFE_MAX * 2 /*history*/];
+    double lfe_data[2*DCA_SUBSUBFAMES_MAX*DCA_LFE_MAX * 2 /*history*/];
     int lfe_scale_factor;
 
     /* Subband samples history (for ADPCM) */
-    double subband_samples_hist[DTS_PRIM_CHANNELS_MAX][DTS_SUBBANDS][4];
-    double subband_fir_hist[DTS_PRIM_CHANNELS_MAX][512];
-    double subband_fir_noidea[DTS_PRIM_CHANNELS_MAX][64];
+    double subband_samples_hist[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS][4];
+    double subband_fir_hist[DCA_PRIM_CHANNELS_MAX][512];
+    double subband_fir_noidea[DCA_PRIM_CHANNELS_MAX][64];
 
     /* Audio output */
     level_t clev;            /* centre channel mix level */

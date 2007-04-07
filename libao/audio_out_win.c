@@ -85,7 +85,7 @@ static int win_play (ao_instance_t * _instance, int flags, sample_t * _samples)
     convert_t * samples = _samples;
 #endif
 
-    flags &= DTS_CHANNEL_MASK | DTS_LFE;
+    flags &= DCA_CHANNEL_MASK | DCA_LFE;
 
     if (instance->set_params) {
 	WAVEFORMATEX waveformat;
@@ -114,12 +114,12 @@ static int win_play (ao_instance_t * _instance, int flags, sample_t * _samples)
 
 	instance->flags = flags;
 	instance->set_params = 0;
-    } else if ((flags == DTS_DOLBY) && (instance->flags == DTS_STEREO)) {
+    } else if ((flags == DCA_DOLBY) && (instance->flags == DCA_STEREO)) {
 	fprintf (stderr, "Switching from stereo to dolby surround\n");
-	instance->flags = DTS_DOLBY;
-    } else if ((flags == DTS_STEREO) && (instance->flags == DTS_DOLBY)) {
+	instance->flags = DCA_DOLBY;
+    } else if ((flags == DCA_STEREO) && (instance->flags == DCA_DOLBY)) {
 	fprintf (stderr, "Switching from dolby surround to stereo\n");
-	instance->flags = DTS_STEREO;
+	instance->flags = DCA_STEREO;
     } else if (flags != instance->flags)
 	return 1;
 
@@ -195,12 +195,12 @@ static ao_instance_t * win_open (int flags)
 
 ao_instance_t * ao_win_open (void)
 {
-    return win_open (DTS_STEREO);
+    return win_open (DCA_STEREO);
 }
 
 ao_instance_t * ao_windolby_open (void)
 {
-    return win_open (DTS_DOLBY);
+    return win_open (DCA_DOLBY);
 }
 
 #endif

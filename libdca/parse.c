@@ -143,7 +143,7 @@ static int syncinfo (dca_state_t * state, int * flags,
 
     /* LFE */
     bitstream_get (state, 10);
-    if (bitstream_get (state, 2)) *flags |= DTS_LFE;
+    if (bitstream_get (state, 2)) *flags |= DCA_LFE;
 
     return frame_size;
 }
@@ -254,8 +254,8 @@ int dts_frame (dca_state_t * state, uint8_t * buf, int * flags,
     if (state->output < 0)
         return 1;
 
-    if (state->lfe && (*flags & DTS_LFE))
-        state->output |= DTS_LFE;
+    if (state->lfe && (*flags & DCA_LFE))
+        state->output |= DCA_LFE;
 
     *flags = state->output;
 
@@ -315,8 +315,8 @@ int dts_frame (dca_state_t * state, uint8_t * buf, int * flags,
 #ifdef DEBUG
         fprintf (stderr, "subband activity: %i\n", state->subband_activity[i]);
 #endif
-        if (state->subband_activity[i] > DTS_SUBBANDS)
-            state->subband_activity[i] = DTS_SUBBANDS;
+        if (state->subband_activity[i] > DCA_SUBBANDS)
+            state->subband_activity[i] = DCA_SUBBANDS;
     }
     for (i = 0; i < state->prim_channels; i++)
     {
@@ -324,8 +324,8 @@ int dts_frame (dca_state_t * state, uint8_t * buf, int * flags,
 #ifdef DEBUG
         fprintf (stderr, "vq start subband: %i\n", state->vq_start_subband[i]);
 #endif
-        if (state->vq_start_subband[i] > DTS_SUBBANDS)
-            state->vq_start_subband[i] = DTS_SUBBANDS;
+        if (state->vq_start_subband[i] > DCA_SUBBANDS)
+            state->vq_start_subband[i] = DCA_SUBBANDS;
     }
     for (i = 0; i < state->prim_channels; i++)
     {
@@ -762,7 +762,7 @@ static int dts_subsubframe (dca_state_t * state)
     double *quant_step_table;
 
     /* FIXME */
-    double subband_samples[DTS_PRIM_CHANNELS_MAX][DTS_SUBBANDS][8];
+    double subband_samples[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS][8];
 
     /*
      * Audio data
@@ -990,21 +990,21 @@ static int dts_subsubframe (dca_state_t * state)
     }
 
     /* Down/Up mixing */
-    if (state->prim_channels < dts_channels[state->output & DTS_CHANNEL_MASK])
+    if (state->prim_channels < dts_channels[state->output & DCA_CHANNEL_MASK])
     {
         dts_upmix (state->samples, state->amode, state->output);
     } else
-    if (state->prim_channels > dts_channels[state->output & DTS_CHANNEL_MASK])
+    if (state->prim_channels > dts_channels[state->output & DCA_CHANNEL_MASK])
     {
         dts_downmix (state->samples, state->amode, state->output, state->bias,
                      state->clev, state->slev);
     }
 
     /* Generate LFE samples for this subsubframe FIXME!!! */
-    if (state->output & DTS_LFE)
+    if (state->output & DCA_LFE)
     {
         int lfe_samples = 2 * state->lfe * state->subsubframes;
-        int i_channels = dts_channels[state->output & DTS_CHANNEL_MASK];
+        int i_channels = dts_channels[state->output & DCA_CHANNEL_MASK];
 
         lfe_interpolation_fir (state->lfe, 2 * state->lfe,
                                state->lfe_data + lfe_samples +

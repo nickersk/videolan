@@ -27,7 +27,7 @@
 #include <inttypes.h>
 
 #include "dts.h"
-#include "dts_internal.h"
+#include "dca_internal.h"
 #include "bitstream.h"
 
 #define BUFFER_SIZE 4096

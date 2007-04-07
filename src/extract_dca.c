@@ -1,6 +1,5 @@
 /*
- * dtsdec.c
- * Copyright (C) 2004 Gildas Bazin <gbazin@videolan.org>
+ * extract_dca.c
  * Copyright (C) 2000-2003 Michel Lespinasse <walken@zoy.org>
  * Copyright (C) 1999-2000 Aaron Holtzman <aholtzma@ess.engr.uvic.ca>
  *
@@ -29,126 +28,27 @@
 #include <string.h>
 #include <errno.h>
 #include <getopt.h>
-#include <math.h>
-#include <signal.h>
 #ifdef HAVE_IO_H
 #include <fcntl.h>
 #include <io.h>
 #endif
 #include <inttypes.h>
 
-#include "dts.h"
-#include "audio_out.h"
-#include "gettimeofday.h"
-
-#define BUFFER_SIZE 24576
-#define HEADER_SIZE 14
+#define BUFFER_SIZE 4096
 static uint8_t buffer[BUFFER_SIZE];
 static FILE * in_file;
-static int demux_track = 0;
+static int demux_track = 0x80;
 static int demux_pid = 0;
 static int demux_pes = 0;
-static int disable_accel = 0;
-static int disable_dynrng = 0;
-static int disable_adjust = 0;
-static float gain = 1;
-static ao_open_t * output_open = NULL;
-static ao_instance_t * output;
-static dts_state_t * state;
-static int sigint = 0;
-
-#ifdef HAVE_GETTIMEOFDAY
-
-static void print_fps (int final);
-
-static RETSIGTYPE signal_handler (int sig)
-{
-    sigint = 1;
-    signal (sig, SIG_DFL);
-    return (RETSIGTYPE)0;
-}
-
-static void print_fps (int final)
-{
-    static uint32_t frame_counter = 0;
-    static struct timeval tv_beg, tv_start;
-    static int total_elapsed;
-    static int last_count = 0;
-    struct timeval tv_end;
-    float fps, tfps;
-    int frames, elapsed;
-
-    gettimeofday (&tv_end, NULL);
-
-    if (!frame_counter) {
-	tv_start = tv_beg = tv_end;
-	signal (SIGINT, signal_handler);
-    }
-
-    elapsed = (tv_end.tv_sec - tv_beg.tv_sec) * 100 +
-	(tv_end.tv_usec - tv_beg.tv_usec) / 10000;
-    total_elapsed = (tv_end.tv_sec - tv_start.tv_sec) * 100 +
-	(tv_end.tv_usec - tv_start.tv_usec) / 10000;
-
-    if (final) {
-	if (total_elapsed)
-	    tfps = frame_counter * 100.0 / total_elapsed;
-	else
-	    tfps = 0;
-
-	fprintf (stderr,"\n%d frames decoded in %.2f seconds (%.2f fps)\n",
-		 frame_counter, total_elapsed / 100.0, tfps);
-
-	return;
-    }
-
-    frame_counter++;
-
-    if (elapsed < 50)	/* only display every 0.50 seconds */
-	return;
-
-    tv_beg = tv_end;
-    frames = frame_counter - last_count;
-
-    fps = frames * 100.0 / elapsed;
-    tfps = frame_counter * 100.0 / total_elapsed;
-
-    fprintf (stderr, "%d frames in %.2f sec (%.2f fps), "
-	     "%d last %.2f sec (%.2f fps)\033[K\r", frame_counter,
-	     total_elapsed / 100.0, tfps, frames, elapsed / 100.0, fps);
-
-    last_count = frame_counter;
-}
-
-#else /* !HAVE_GETTIMEOFDAY */
-
-static void print_fps (int final)
-{
-}
-
-#endif
 
 static void print_usage (char ** argv)
 {
-    int i;
-    ao_driver_t * drivers;
-
-    fprintf (stderr, "usage: "
-	     "%s [-h] [-o <mode>] [-s [<track>]] [-t <pid>] [-c] [-r] [-a] \\\n"
-	     "\t\t[-g <gain>] <file>\n"
-	     "\t-h\tdisplay help and available audio output modes\n"
-	     "\t-s\tuse program stream demultiplexer, track 0-7 or 0x80-0x87\n"
+    fprintf (stderr, "usage: %s [-h] [-s <track>] [-t <pid>] <file>\n"
+	     "\t-h\tdisplay help\n"
+	     "\t-s\tset track number (0-7 or 0x80-0x87)\n"
 	     "\t-t\tuse transport stream demultiplexer, pid 0x10-0x1ffe\n"
-	     "\t-T\tuse transport stream PES demultiplexer\n"
-	     "\t-c\tuse c implementation, disables all accelerations\n"
-	     "\t-r\tdisable dynamic range compression\n"
-	     "\t-a\tdisable level adjustment based on output mode\n"
-	     "\t-g\tadd specified gain in decibels, -96.0 to +96.0\n"
-	     "\t-o\taudio output mode\n", argv[0]);
-
-    drivers = ao_drivers ();
-    for (i = 0; drivers[i].name; i++)
-	fprintf (stderr, "\t\t\t%s\n", drivers[i].name);
+	     "\t-T\tuse transport stream PES demultiplexer\n",
+	     argv[0]);
 
     exit (1);
 }
@@ -156,33 +56,17 @@ static void print_usage (char ** argv)
 static void handle_args (int argc, char ** argv)
 {
     int c;
-    ao_driver_t * drivers;
-    int i;
     char * s;
 
-    drivers = ao_drivers ();
-    while ((c = getopt (argc, argv, "hs::t:Tcrag:o:")) != -1)
+    while ((c = getopt (argc, argv, "hs:t:T")) != -1)
 	switch (c) {
-	case 'o':
-	    for (i = 0; drivers[i].name != NULL; i++)
-		if (strcmp (drivers[i].name, optarg) == 0)
-		    output_open = drivers[i].open;
-	    if (output_open == NULL) {
-		fprintf (stderr, "Invalid video driver: %s\n", optarg);
-		print_usage (argv);
-	    }
-	    break;
-
 	case 's':
-	    demux_track = 0x88;
-	    if (optarg != NULL) {
-		demux_track = strtol (optarg, &s, 0);
-		if (demux_track < 0x88)
-		    demux_track += 0x88;
-		if (demux_track < 0x88 || demux_track > 0x8f || *s) {
-		    fprintf (stderr, "Invalid track number: %s\n", optarg);
-		    print_usage (argv);
-		}
+	    demux_track = strtol (optarg, &s, 0);
+	    if (demux_track < 0x80)
+		demux_track += 0x80;
+	    if (demux_track < 0x80 || demux_track > 0x87 || *s) {
+		fprintf (stderr, "Invalid track number: %s\n", optarg);
+		print_usage (argv);
 	    }
 	    break;
 
@@ -198,34 +82,9 @@ static void handle_args (int argc, char ** argv)
 	    demux_pes = 1;
 	    break;
 
-	case 'c':
-	    disable_accel = 1;
-	    break;
-
-	case 'r':
-	    disable_dynrng = 1;
-	    break;
-
-	case 'a':
-	    disable_adjust = 1;
-	    break;
-
-	case 'g':
-	    gain = strtod (optarg, &s);
-	    if (gain < -96 || gain > 96 || *s) {
-		fprintf (stderr, "Invalid gain: %s\n", optarg);
-		print_usage (argv);
-	    }
-	    gain = pow (2, gain / 6);
-	    break;
-
 	default:
 	    print_usage (argv);
 	}
-
-    /* -o not specified, use a default driver */
-    if (output_open == NULL)
-	output_open = drivers[0].open;
 
     if (optind < argc) {
 	in_file = fopen (argv[optind], "rb");
@@ -236,79 +95,6 @@ static void handle_args (int argc, char ** argv)
 	}
     } else
 	in_file = stdin;
-}
-
-void dts_decode_data (uint8_t * start, uint8_t * end)
-{
-    static uint8_t buf[BUFFER_SIZE];
-    static uint8_t * bufptr = buf;
-    static uint8_t * bufpos = buf + HEADER_SIZE;
-
-    /*
-     * sample_rate and flags are static because this routine could
-     * exit between the dts_syncinfo() and the ao_setup(), and we want
-     * to have the same values when we get back !
-     */
-
-    static int sample_rate;
-    static int frame_length;
-    static int flags;
-    int bit_rate;
-    int len;
-
-    while (1) {
-	len = end - start;
-	if (!len)
-	    break;
-	if (len > bufpos - bufptr)
-	    len = bufpos - bufptr;
-	memcpy (bufptr, start, len);
-	bufptr += len;
-	start += len;
-	if (bufptr == bufpos) {
-	    if (bufpos == buf + HEADER_SIZE) {
-		int length;
-
-		length = dts_syncinfo (state, buf, &flags, &sample_rate,
-                                       &bit_rate, &frame_length);
-		if (!length) {
-		    fprintf (stderr, "skip\n");
-		    for (bufptr = buf; bufptr < buf + HEADER_SIZE-1; bufptr++)
-			bufptr[0] = bufptr[1];
-		    continue;
-		}
-		bufpos = buf + length;
-	    } else {
-		level_t level;
-		sample_t bias;
-		int i;
-
-		if (output->setup (output, sample_rate, &flags, &level, &bias))
-		    goto error;
-		if (!disable_adjust)
-		    flags |= DTS_ADJUST_LEVEL;
-		level = (level_t) (level * gain);
-		if (dts_frame (state, buf, &flags, &level, bias))
-		    goto error;
-		if (disable_dynrng)
-		    dts_dynrng (state, NULL, NULL);
-		for (i = 0; i < dts_blocks_num (state); i++) {
-		    if (dts_block (state))
-		        goto error;
-		    if (output->play (output, flags, dts_samples (state)))
-			goto error;
-		}
-		bufptr = buf;
-		bufpos = buf + HEADER_SIZE;
-		print_fps (0);
-		continue;
-	    error:
-		fprintf (stderr, "error\n");
-		bufptr = buf;
-		bufpos = buf + HEADER_SIZE;
-	    }
-	}
-    }
 }
 
 #define DEMUX_PAYLOAD_START 1
@@ -388,11 +174,11 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 	break;
     case DEMUX_DATA:
 	if (demux_pid || (state_bytes > end - buf)) {
-	    dts_decode_data (buf, end);
+	    fwrite (buf, end - buf, 1, stdout);
 	    state_bytes -= end - buf;
 	    return 0;
 	}
-	dts_decode_data (buf, buf + state_bytes);
+	fwrite (buf, state_bytes, 1, stdout);
 	buf += state_bytes;
 	break;
     case DEMUX_SKIP:
@@ -435,7 +221,7 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 		exit (1);
 	    }
 	    NEEDBYTES (9);
-	    if ((header[6] & 0xc8) != 0x88) {	/* not mpeg2 */
+	    if ((header[6] & 0xc0) != 0x80) {	/* not mpeg2 */
 		fprintf (stderr, "bad multiplex - not mpeg2\n");
 		exit (1);
 	    }
@@ -444,12 +230,12 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 	    DONEBYTES (len);
 	    bytes = 6 + (header[4] << 8) + header[5] - len;
 	    if (bytes > end - buf) {
-		dts_decode_data (buf, end);
+		fwrite (buf, end - buf, 1, stdout);
 		state = DEMUX_DATA;
 		state_bytes = bytes - (end - buf);
 		return 0;
 	    } else if (bytes > 0) {
-		dts_decode_data (buf, buf + bytes);
+		fwrite (buf, bytes, 1, stdout);
 		buf += bytes;
 	    }
 	} else switch (header[3]) {
@@ -511,12 +297,12 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 	    DONEBYTES (len);
 	    bytes = 6 + (header[4] << 8) + header[5] - len;
 	    if (bytes > end - buf) {
-		dts_decode_data (buf, end);
+		fwrite (buf, end - buf, 1, stdout);
 		state = DEMUX_DATA;
 		state_bytes = bytes - (end - buf);
 		return 0;
 	    } else if (bytes > 0) {
-		dts_decode_data (buf, buf + bytes);
+		fwrite (buf, bytes, 1, stdout);
 		buf += bytes;
 	    }
 	    break;
@@ -549,7 +335,7 @@ static void ps_loop (void)
 	end = buffer + fread (buffer, 1, BUFFER_SIZE, in_file);
 	if (demux (buffer, end, 0))
 	    break;	/* hit program_end_code */
-    } while (end == buffer + BUFFER_SIZE && !sigint);
+    } while (end == buffer + BUFFER_SIZE);
 }
 
 static void ts_loop (void)
@@ -561,7 +347,7 @@ static void ts_loop (void)
     int pid;
 
     buf = buffer;
-    do {
+    while (1) {
 	end = buf + fread (buf, 1, buffer + BUFFER_SIZE - buf, in_file);
 	buf = buffer;
 	for (; (nextbuf = buf + 188) <= end; buf = nextbuf) {
@@ -587,60 +373,22 @@ static void ts_loop (void)
 	    break;
 	memcpy (buffer, buf, end - buf);
 	buf = buffer + (end - buf);
-    } while (!sigint);
-}
-
-static void es_loop (void)
-{
-    int size;
-		
-    do {
-	size = fread (buffer, 1, BUFFER_SIZE, in_file);
-	dts_decode_data (buffer, buffer + size);
-    } while (size == BUFFER_SIZE && !sigint);
+    }
 }
 
 int main (int argc, char ** argv)
 {
-    uint32_t accel;
-
 #ifdef HAVE_IO_H
     setmode (fileno (stdin), O_BINARY);
     setmode (fileno (stdout), O_BINARY);
 #endif
 
-    fprintf (stderr, PACKAGE"-"VERSION
-	     " - by Gildas Bazin <gbazin@videolan.org>\n");
-
-    fprintf (stderr, "  based on the a52dec code from "
-	     "Michel Lespinasse <walken@zoy.org> and Aaron Holtzman\n");
-
     handle_args (argc, argv);
-
-    accel = 0;
-
-    output = output_open ();
-    if (output == NULL) {
-	fprintf (stderr, "Can not open output\n");
-	return 1;
-    }
-
-    state = dts_init (accel);
-    if (state == NULL) {
-	fprintf (stderr, "DTS init failed\n");
-	return 1;
-    }
 
     if (demux_pid)
 	ts_loop ();
-    else if (demux_track || demux_pes)
-	ps_loop ();
     else
-	es_loop ();
+	ps_loop ();
 
-    dts_free (state);
-    print_fps (1);
-    if (output->close)
-	output->close (output);
     return 0;
 }

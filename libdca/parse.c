@@ -35,7 +35,7 @@
 #endif
 
 #include "dts.h"
-#include "dts_internal.h"
+#include "dca_internal.h"
 #include "bitstream.h"
 
 #include "tables.h"

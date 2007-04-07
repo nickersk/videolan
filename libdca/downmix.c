@@ -32,7 +32,7 @@
 
 #define CONVERT(acmod,output) (((output) << DCA_CHANNEL_BITS) + (acmod))
 
-int dts_downmix_init (int input, int flags, level_t * level,
+int dca_downmix_init (int input, int flags, level_t * level,
 		      level_t clev, level_t slev)
 {
     static uint8_t table[11][10] = {
@@ -183,7 +183,7 @@ int dts_downmix_init (int input, int flags, level_t * level,
     return output;
 }
 
-int dts_downmix_coeff (level_t * coeff, int acmod, int output, level_t level,
+int dca_downmix_coeff (level_t * coeff, int acmod, int output, level_t level,
 		       level_t clev, level_t slev)
 {
     level_t level_3db;
@@ -491,7 +491,7 @@ static void zero (sample_t * samples)
 	samples[i] = 0;
 }
 
-void dts_downmix (sample_t * samples, int acmod, int output, sample_t bias,
+void dca_downmix (sample_t * samples, int acmod, int output, sample_t bias,
 		  level_t clev, level_t slev)
 {
     switch (CONVERT (acmod, output & DCA_CHANNEL_MASK)) {
@@ -628,7 +628,7 @@ void dts_downmix (sample_t * samples, int acmod, int output, sample_t bias,
     }
 }
 
-void dts_upmix (sample_t * samples, int acmod, int output)
+void dca_upmix (sample_t * samples, int acmod, int output)
 {
     switch (CONVERT (acmod, output & DCA_CHANNEL_MASK)) {
 

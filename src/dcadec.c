@@ -238,7 +238,7 @@ static void handle_args (int argc, char ** argv)
 	in_file = stdin;
 }
 
-void dts_decode_data (uint8_t * start, uint8_t * end)
+static void dca_decode_data (uint8_t * start, uint8_t * end)
 {
     static uint8_t buf[BUFFER_SIZE];
     static uint8_t * bufptr = buf;
@@ -246,7 +246,7 @@ void dts_decode_data (uint8_t * start, uint8_t * end)
 
     /*
      * sample_rate and flags are static because this routine could
-     * exit between the dts_syncinfo() and the ao_setup(), and we want
+     * exit between the dca_syncinfo() and the ao_setup(), and we want
      * to have the same values when we get back !
      */
 
@@ -269,7 +269,7 @@ void dts_decode_data (uint8_t * start, uint8_t * end)
 	    if (bufpos == buf + HEADER_SIZE) {
 		int length;
 
-		length = dts_syncinfo (state, buf, &flags, &sample_rate,
+		length = dca_syncinfo (state, buf, &flags, &sample_rate,
                                        &bit_rate, &frame_length);
 		if (!length) {
 		    fprintf (stderr, "skip\n");
@@ -288,14 +288,14 @@ void dts_decode_data (uint8_t * start, uint8_t * end)
 		if (!disable_adjust)
 		    flags |= DCA_ADJUST_LEVEL;
 		level = (level_t) (level * gain);
-		if (dts_frame (state, buf, &flags, &level, bias))
+		if (dca_frame (state, buf, &flags, &level, bias))
 		    goto error;
 		if (disable_dynrng)
-		    dts_dynrng (state, NULL, NULL);
-		for (i = 0; i < dts_blocks_num (state); i++) {
-		    if (dts_block (state))
+		    dca_dynrng (state, NULL, NULL);
+		for (i = 0; i < dca_blocks_num (state); i++) {
+		    if (dca_block (state))
 		        goto error;
-		    if (output->play (output, flags, dts_samples (state)))
+		    if (output->play (output, flags, dca_samples (state)))
 			goto error;
 		}
 		bufptr = buf;
@@ -388,11 +388,11 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 	break;
     case DEMUX_DATA:
 	if (demux_pid || (state_bytes > end - buf)) {
-	    dts_decode_data (buf, end);
+	    dca_decode_data (buf, end);
 	    state_bytes -= end - buf;
 	    return 0;
 	}
-	dts_decode_data (buf, buf + state_bytes);
+	dca_decode_data (buf, buf + state_bytes);
 	buf += state_bytes;
 	break;
     case DEMUX_SKIP:
@@ -444,12 +444,12 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 	    DONEBYTES (len);
 	    bytes = 6 + (header[4] << 8) + header[5] - len;
 	    if (bytes > end - buf) {
-		dts_decode_data (buf, end);
+		dca_decode_data (buf, end);
 		state = DEMUX_DATA;
 		state_bytes = bytes - (end - buf);
 		return 0;
 	    } else if (bytes > 0) {
-		dts_decode_data (buf, buf + bytes);
+		dca_decode_data (buf, buf + bytes);
 		buf += bytes;
 	    }
 	} else switch (header[3]) {
@@ -511,12 +511,12 @@ static int demux (uint8_t * buf, uint8_t * end, int flags)
 	    DONEBYTES (len);
 	    bytes = 6 + (header[4] << 8) + header[5] - len;
 	    if (bytes > end - buf) {
-		dts_decode_data (buf, end);
+		dca_decode_data (buf, end);
 		state = DEMUX_DATA;
 		state_bytes = bytes - (end - buf);
 		return 0;
 	    } else if (bytes > 0) {
-		dts_decode_data (buf, buf + bytes);
+		dca_decode_data (buf, buf + bytes);
 		buf += bytes;
 	    }
 	    break;
@@ -596,7 +596,7 @@ static void es_loop (void)
 		
     do {
 	size = fread (buffer, 1, BUFFER_SIZE, in_file);
-	dts_decode_data (buffer, buffer + size);
+	dca_decode_data (buffer, buffer + size);
     } while (size == BUFFER_SIZE && !sigint);
 }
 
@@ -625,7 +625,7 @@ int main (int argc, char ** argv)
 	return 1;
     }
 
-    state = dts_init (accel);
+    state = dca_init (accel);
     if (state == NULL) {
 	fprintf (stderr, "DTS init failed\n");
 	return 1;
@@ -638,7 +638,7 @@ int main (int argc, char ** argv)
     else
 	es_loop ();
 
-    dts_free (state);
+    dca_free (state);
     print_fps (1);
     if (output->close)
 	output->close (output);

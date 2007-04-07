@@ -154,13 +154,13 @@ struct dca_state_s {
 #define LEVEL_45DB 0.5946035575013605
 #define LEVEL_6DB 0.5
 
-int dts_downmix_init (int input, int flags, level_t * level,
+int dca_downmix_init (int input, int flags, level_t * level,
                       level_t clev, level_t slev);
-int dts_downmix_coeff (level_t * coeff, int acmod, int output, level_t level,
+int dca_downmix_coeff (level_t * coeff, int acmod, int output, level_t level,
                        level_t clev, level_t slev);
-void dts_downmix (sample_t * samples, int acmod, int output, sample_t bias,
+void dca_downmix (sample_t * samples, int acmod, int output, sample_t bias,
                   level_t clev, level_t slev);
-void dts_upmix (sample_t * samples, int acmod, int output);
+void dca_upmix (sample_t * samples, int acmod, int output);
 
 #define ROUND(x) ((int)((x) + ((x) > 0 ? 0.5 : -0.5)))
 

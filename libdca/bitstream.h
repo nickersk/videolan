@@ -47,9 +47,9 @@
 
 #endif
 
-void dts_bitstream_init (dca_state_t * state, uint8_t * buf, int word_mode,
+void dca_bitstream_init (dca_state_t * state, uint8_t * buf, int word_mode,
                          int endian_mode);
-uint32_t dts_bitstream_get_bh (dca_state_t * state, uint32_t num_bits);
+uint32_t dca_bitstream_get_bh (dca_state_t * state, uint32_t num_bits);
 
 static inline uint32_t bitstream_get (dca_state_t * state, uint32_t num_bits)
 {
@@ -63,5 +63,5 @@ static inline uint32_t bitstream_get (dca_state_t * state, uint32_t num_bits)
         return result;
     }
 
-    return dts_bitstream_get_bh (state, num_bits);
+    return dca_bitstream_get_bh (state, num_bits);
 }

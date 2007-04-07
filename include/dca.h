@@ -64,22 +64,22 @@ typedef struct dca_state_s dca_state_t;
 #define DCA_LFE 0x80
 #define DCA_ADJUST_LEVEL 0x100
 
-dca_state_t * dts_init (uint32_t mm_accel);
+dca_state_t * dca_init (uint32_t mm_accel);
 
-int dts_syncinfo (dca_state_t *state, uint8_t * buf, int * flags,
+int dca_syncinfo (dca_state_t *state, uint8_t * buf, int * flags,
                   int * sample_rate, int * bit_rate, int *frame_length);
 
-int dts_frame (dca_state_t * state, uint8_t * buf, int * flags,
+int dca_frame (dca_state_t * state, uint8_t * buf, int * flags,
                level_t * level, sample_t bias);
 
-void dts_dynrng (dca_state_t * state,
+void dca_dynrng (dca_state_t * state,
                  level_t (* call) (level_t, void *), void * data);
 
-int dts_blocks_num (dca_state_t * state);
-int dts_block (dca_state_t * state);
+int dca_blocks_num (dca_state_t * state);
+int dca_block (dca_state_t * state);
 
-sample_t * dts_samples (dca_state_t * state);
+sample_t * dca_samples (dca_state_t * state);
 
-void dts_free (dca_state_t * state);
+void dca_free (dca_state_t * state);
 
 #endif /* LIBDCA_DCA_H */

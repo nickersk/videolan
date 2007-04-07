@@ -42,4 +42,13 @@ typedef struct dca_state_s dts_state_t;
 # define DTS_CHANNEL_MASK DCA_CHANNEL_MASK
 # define DTS_LFE DCA_LFE
 # define DTS_ADJUST_LEVEL DCA_ADJUST_LEVEL
+
+# define dts_init dca_init
+# define dts_syncinfo dca_syncinfo
+# define dts_frame dca_frame
+# define dts_dynrng dca_dynrng
+# define dts_blocks_num dca_blocks_num
+# define dts_block dca_block
+# define dts_sampes dca_samples
+# define dts_free dca_free
 #endif

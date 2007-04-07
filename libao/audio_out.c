@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#include "dts.h"
+#include "dca.h"
 #include "audio_out.h"
 
 extern ao_open_t ao_oss_open;

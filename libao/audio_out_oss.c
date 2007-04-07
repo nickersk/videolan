@@ -54,7 +54,7 @@
 #define OSS_DEVICE "/dev/dsp"
 #endif
 
-#include "dts.h"
+#include "dca.h"
 #include "audio_out.h"
 #include "audio_out_internal.h"
 

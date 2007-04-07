@@ -29,7 +29,7 @@
 #include <errno.h>
 #include <inttypes.h>
 
-#include "dts.h"
+#include "dca.h"
 #include "audio_out.h"
 #include "audio_out_internal.h"
 

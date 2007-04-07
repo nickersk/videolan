@@ -27,7 +27,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include "dts.h"
+#include "dca.h"
 #include "dca_internal.h"
 
 #define CONVERT(acmod,output) (((output) << DTS_CHANNEL_BITS) + (acmod))

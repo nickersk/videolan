@@ -4,6 +4,7 @@ Fix for pointer aliasing.
 Build system rework.
 FreBSD compile fix.
 Changed library name to libdca (was formerly known as libdts).
+Removed Debian packaging files now maintained separately.
 
 libdca-0.0.2 Sun Feb 29 12:45:21 CET 2004
 

@@ -3,8 +3,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 
 bin_PROGRAMS = dcadec extract_dca
 dcadec_SOURCES = dcadec.c getopt.h getopt.c gettimeofday.h gettimeofday.c
-dcadec_LDADD = ../libdca/libdca.la \
-	       ../libao/libao.la $(LIBAO_LIBS)
+dcadec_LDADD = ../libdca/libdca.la ../libao/libao.la
 extract_dca_SOURCES = extract_dca.c getopt.c
 
 man1_MANS = dcadec.1 extract_dca.1

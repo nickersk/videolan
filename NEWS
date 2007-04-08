@@ -1,3 +1,8 @@
+libdca-0.0.4 Sun Apr  8 11:00:58 CEST 2007
+
+Fix shared library linking.
+Disable non-PIC optimization by default (use --without-pic to re-enable).
+
 libdca-0.0.3 Thu Apr  5 20:48:56 EEST 2007
 
 Fix for pointer aliasing.

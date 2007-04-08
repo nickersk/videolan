@@ -2,7 +2,9 @@ AC_SUBST([LIBDCA_CFLAGS])
 AC_SUBST([LIBDCA_LIBS])
 
 dnl avoid -fPIC when possible
-AC_LIBTOOL_NON_PIC([LIBDCA_CFLAGS="$LIBDCA_CFLAGS -prefer-non-pic"])
+AS_IF([test "x${with_pic}" = "xno"],
+  [AC_LIBTOOL_NON_PIC([LIBDCA_CFLAGS="$LIBDCA_CFLAGS -prefer-non-pic"])
+])
 
 AC_ARG_ENABLE([fixed],
     [  --enable-fixed          use fixed-point (integer-based) arithmetic])

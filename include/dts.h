@@ -50,6 +50,6 @@ typedef struct dca_state_s dts_state_t;
 # define dts_dynrng dca_dynrng
 # define dts_blocks_num dca_blocks_num
 # define dts_block dca_block
-# define dts_sampes dca_samples
+# define dts_samples dca_samples
 # define dts_free dca_free
 #endif

@@ -34,6 +34,8 @@
 static int float_setup (ao_instance_t * instance, int sample_rate, int * flags,
 			level_t * level, sample_t * bias)
 {
+    (void)instance;
+    (void)sample_rate;
     *flags = DCA_STEREO;
     *level = CONVERT_LEVEL;
     *bias = 0;
@@ -62,11 +64,14 @@ static int float_play (ao_instance_t * instance, int flags,
 
     fwrite (samples, sizeof (float), 256 * 2, stdout);
 
+    (void)instance;
+    (void)flags;
     return 0;
 }
 
 static void float_close (ao_instance_t * instance)
 {
+    (void)instance;
 }
 
 static ao_instance_t instance = {float_setup, float_play, float_close};

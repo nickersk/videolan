@@ -43,17 +43,20 @@ static int null_setup (ao_instance_t * _instance, int sample_rate, int * flags,
     *flags = instance->channels;
     *level = CONVERT_LEVEL;
     *bias = CONVERT_BIAS;
+    (void)sample_rate;
 
     return 0;
 }
 
 static int null_play (ao_instance_t * instance, int flags, sample_t * samples)
 {
+    (void)instance; (void)flags; (void)samples;
     return 0;
 }
 
 static void null_close (ao_instance_t * instance)
 {
+    (void)instance;
 }
 
 static null_instance_t instance = {{null_setup, null_play, null_close}, 0};

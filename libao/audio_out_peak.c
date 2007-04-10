@@ -20,6 +20,8 @@ static int peak_setup (ao_instance_t * _instance, int sample_rate, int * flags,
 {
     peak_instance_t * instance = (peak_instance_t *) _instance;
 
+    (void)sample_rate;
+    (void)flags;
     *flags = instance->flags;
     *level = CONVERT_LEVEL;
     *bias = 0;
@@ -31,6 +33,8 @@ static int peak_play (ao_instance_t * _instance, int flags, sample_t * samples)
 {
     peak_instance_t * instance = (peak_instance_t *) _instance;
     int i;
+
+    (void)flags;
 
     for (i = 0; i < 256 * 2; i++) {
 #ifdef LIBDCA_FIXED

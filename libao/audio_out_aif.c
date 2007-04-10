@@ -105,6 +105,7 @@ static int aif_play (ao_instance_t * _instance, int flags, sample_t * _samples)
 
     instance->size += 256 * sizeof (int16_t) * 2;
 
+    (void)flags;
     return 0;
 }
 

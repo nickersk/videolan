@@ -73,6 +73,7 @@ dca_state_t * dca_init (uint32_t mm_accel)
     dca_state_t * state;
     int i;
 
+    (void)mm_accel;
     state = (dca_state_t *) malloc (sizeof (dca_state_t));
     if (state == NULL)
         return NULL;
@@ -131,13 +132,13 @@ static int syncinfo (dca_state_t * state, int * flags,
         return 0;
 
     *sample_rate = bitstream_get (state, 4);
-    if (*sample_rate >= sizeof (dca_sample_rates) / sizeof (int))
+    if ((size_t)*sample_rate >= sizeof (dca_sample_rates) / sizeof (int))
         return 0;
     *sample_rate = dca_sample_rates[ *sample_rate ];
     if (!*sample_rate) return 0;
 
     *bit_rate = bitstream_get (state, 5);
-    if (*bit_rate >= sizeof (dca_bit_rates) / sizeof (int))
+    if ((size_t)*bit_rate >= sizeof (dca_bit_rates) / sizeof (int))
         return 0;
     *bit_rate = dca_bit_rates[ *bit_rate ];
     if (!*bit_rate) return 0;

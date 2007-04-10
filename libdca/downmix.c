@@ -495,6 +495,8 @@ static void zero (sample_t * samples)
 void dca_downmix (sample_t * samples, int acmod, int output, sample_t bias,
 		  level_t clev, level_t slev)
 {
+    (void)clev;
+
     switch (CONVERT (acmod, output & DCA_CHANNEL_MASK)) {
 
     case CONVERT (DCA_CHANNEL, DCA_MONO):

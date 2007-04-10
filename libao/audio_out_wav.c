@@ -100,7 +100,7 @@ static int wav_setup (ao_instance_t * _instance, int sample_rate, int * flags,
     *level = CONVERT_LEVEL;
     *bias = 0;
 
-    if( instance->flags == DCA_STEREO );
+    if( instance->flags == DCA_STEREO )
         *bias = CONVERT_BIAS;
 
     return 0;

@@ -34,7 +34,7 @@ struct ao_instance_s {
 typedef ao_instance_t * ao_open_t (void);
 
 typedef struct ao_driver_s {
-    char * name;
+    const char * name;
     ao_open_t * open;
 } ao_driver_t;
 

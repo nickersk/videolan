@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.54)
-AC_INIT([libdca],[0.0.4])
+AC_INIT([libdca],[0.0.5])
 AC_CONFIG_SRCDIR([src/dcadec.c])
 AC_CONFIG_AUX_DIR(autotools)
 AC_CONFIG_FILES([Makefile autotools/Makefile include/Makefile test/Makefile

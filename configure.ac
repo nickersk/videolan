@@ -7,7 +7,7 @@ AC_CONFIG_FILES([Makefile autotools/Makefile include/Makefile test/Makefile
     src/Makefile libdca/Makefile libao/Makefile vc++/Makefile
     libdca/libdca.pc libdca/libdts.pc])
 AM_INIT_AUTOMAKE([1.5 dist-bzip2 no-dist-gzip check-news -Wall])
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST
 

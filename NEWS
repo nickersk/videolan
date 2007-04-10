@@ -1,3 +1,7 @@
+libdca-0.0.5 Tue Apr 10 14:31:59 CEST 2007
+
+Fix typo in dts.h
+
 libdca-0.0.4 Sun Apr  8 11:00:58 CEST 2007
 
 Fix shared library linking.

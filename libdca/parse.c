@@ -548,7 +548,7 @@ static int dca_subframe_header (dca_state_t * state)
     /* Scale factors */
     for (j = 0; j < state->prim_channels; j++)
     {
-        int *scale_table;
+        const int *scale_table;
         int scale_sum;
 
         for (k = 0; k < state->subband_activity[j]; k++)
@@ -761,7 +761,7 @@ static int dca_subsubframe (dca_state_t * state)
     int k, l;
     int subsubframe = state->current_subsubframe;
 
-    double *quant_step_table;
+    const double *quant_step_table;
 
     /* FIXME */
     double subband_samples[DCA_PRIM_CHANNELS_MAX][DCA_SUBBANDS][8];
@@ -1145,7 +1145,7 @@ static void qmf_32_subbands (dca_state_t * state, int chans,
                              double samples_in[32][8], sample_t *samples_out,
                              double scale, sample_t bias)
 {
-    double *prCoeff;
+    const double *prCoeff;
     int i, j, k;
     double raXin[32];
 
@@ -1236,7 +1236,7 @@ static void lfe_interpolation_fir (int nDecimationSelect, int nNumDeciSample,
      */
 
     int nDeciFactor, k, J;
-    double *prCoeff;
+    const double *prCoeff;
 
     int NumFIRCoef = 512; /* Number of FIR coefficients */
     int nInterpIndex = 0; /* Index to the interpolated samples */

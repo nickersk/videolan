@@ -2,8 +2,8 @@ dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.54)
 AC_INIT([libdca],[0.0.5])
 AC_CONFIG_SRCDIR([src/dcadec.c])
-AC_CONFIG_AUX_DIR(autotools)
-AC_CONFIG_FILES([Makefile autotools/Makefile include/Makefile test/Makefile
+AC_CONFIG_AUX_DIR(.auto)
+AC_CONFIG_FILES([Makefile include/Makefile test/Makefile
     src/Makefile libdca/Makefile libao/Makefile vc++/Makefile
     libdca/libdca.pc libdca/libdts.pc])
 AM_INIT_AUTOMAKE([1.5 dist-bzip2 no-dist-gzip check-news -Wall])

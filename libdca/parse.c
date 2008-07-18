@@ -305,7 +305,14 @@ int dca_frame (dca_state_t * state, uint8_t * buf, int * flags,
 
     /* Primary audio coding header */
     state->subframes = bitstream_get (state, 4) + 1;
+
+    if (state->subframes > DCA_SUBFRAMES_MAX)
+        state->subframes = DCA_SUBFRAMES_MAX;
+
     state->prim_channels = bitstream_get (state, 3) + 1;
+
+    if (state->prim_channels > DCA_PRIM_CHANNELS_MAX)
+        state->prim_channels = DCA_PRIM_CHANNELS_MAX;
 
 #ifdef DEBUG
     fprintf (stderr, "subframes: %i\n", state->subframes);

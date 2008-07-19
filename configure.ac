@@ -115,8 +115,70 @@ dnl Checks for library functions.
 AC_CHECK_FUNCS([memalign gettimeofday ftime])
 AC_TYPE_SIGNAL
 
-builtin([include],[libdca/configure.incl])
-builtin([include],[libao/configure.incl])
+AC_SUBST([LIBDCA_CFLAGS])
+AC_SUBST([LIBDCA_LIBS])
+
+dnl avoid -fPIC when possible
+AS_IF([test "x${with_pic}" = "xno"],
+  [AC_LIBTOOL_NON_PIC([LIBDCA_CFLAGS="$LIBDCA_CFLAGS -prefer-non-pic"])
+])
+
+AC_ARG_ENABLE([fixed],
+    [  --enable-fixed          use fixed-point (integer-based) arithmetic])
+AC_ARG_ENABLE([double],
+    [  --enable-double         use double-precision samples])
+
+if test x"$enable_fixed" = x"yes"; then
+    AC_DEFINE([LIBDCA_FIXED],,[use fixed-point arithmetic])
+elif test x"$enable_double" = x"yes"; then
+    AC_DEFINE([LIBDCA_DOUBLE],,[a52 sample precision])
+fi
+
+AC_SUBST([LIBAO_LIBS])
+
+dnl check for oss
+AC_ARG_ENABLE([oss],
+    [  --disable-oss           make a version not using oss])
+if test x"$enable_oss" != x"no"; then
+    case "$host" in
+    *-linux*|*-openbsd*|*-freebsd*|*-netbsd*|*-bsdi*)
+        AC_DEFINE([LIBAO_OSS],,[libao OSS support])
+        AC_CHECK_LIB([ossaudio],[_oss_ioctl],
+            [LIBAO_LIBS="$LIBAO_LIBS -lossaudio"]);;
+    esac
+fi
+
+dnl check for solaris
+AC_ARG_ENABLE([solaris-audio],
+    [  --disable-solaris-audio make a version not using solaris audio])
+if test x"$enable_solaris_audio" != x"no"; then
+    case "$host" in
+    *-sun-solaris*)
+        AC_DEFINE([LIBAO_SOLARIS],,[libao solaris support]);;
+    esac
+fi
+
+dnl check for al
+AC_ARG_ENABLE([al-audio],
+    [  --disable-al-audio      make a version not using al audio])
+if test x"$enable_al" != x"no"; then
+    case "$host" in
+    *-sgi-irix*)
+        LIBAO_LIBS="$LIBAO_LIBS -laudio"
+        AC_DEFINE([LIBAO_AL],,[libao al support]);;
+    esac
+fi
+
+dnl check for win32
+AC_ARG_ENABLE([win],
+    [  --disable-win           make a version not using win audio])
+if test x"$enable_win" != x"no"; then
+    case "$host" in
+    *-mingw32*|*-cygwin)
+        LIBAO_LIBS="$LIBAO_LIBS -lwinmm"
+        AC_DEFINE([LIBAO_WIN],,[libao win support]);;
+    esac
+fi
 
 AC_ARG_ENABLE([warnings],
     [  --enable-warnings       treat warnings as errors])
@@ -129,7 +191,16 @@ elif test x"$TENDRA" = x"yes"; then
     OPT_CFLAGS="$OPT_CFLAGS -DTenDRA_check"
 fi
 
-builtin([include],[src/configure.incl])
+AC_SUBST([DCADEC_CFLAGS])
+
+DCADEC_CFLAGS="$OPT_CFLAGS"
+
+AC_ARG_ENABLE([gprof],[  --enable-gprof          make a version using gprof])
+if test x"$enable_gprof" = x"yes"; then
+    AC_DEFINE([DCADEC_GPROF],,[a52dec profiling])
+    DCADEC_CFLAGS=`echo "$DCADEC_CFLAGS"|sed "s/-fomit-frame-pointer//g"`
+    DCADEC_CFLAGS="$DCADEC_CFLAGS -p"
+fi
 
 AC_C_ATTRIBUTE_ALIGNED
 

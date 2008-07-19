@@ -1,104 +1,3 @@
-dnl AC_C_BUILTIN_EXPECT
-dnl Check whether compiler understands __builtin_expect.
-AC_DEFUN([AC_C_BUILTIN_EXPECT],
-    [AC_CACHE_CHECK([for __builtin_expect],[ac_cv_builtin_expect],
-	[cat > conftest.c <<EOF
-#line __oline__ "configure"
-int foo (int a)
-{
-    a = __builtin_expect (a, 10);
-    return a == 10 ? 0 : 1;
-}
-EOF
-	if AC_TRY_COMMAND([${CC-cc} $CFLAGS -nostdlib -nostartfiles
-            -o conftest conftest.c -lgcc >&AC_FD_CC]); then
-	    ac_cv_builtin_expect=yes
-	else
-	    ac_cv_builtin_expect=no
-	fi
-	rm -f conftest*])
-    if test x"$ac_cv_builtin_expect" = x"yes"; then
-	AC_DEFINE(HAVE_BUILTIN_EXPECT,,
-	    [Define if you have the `__builtin_expect' function.])
-    fi])
-
-dnl AC_C_ALWAYS_INLINE
-dnl Define inline to something appropriate, including the new always_inline
-dnl attribute from gcc 3.1
-AC_DEFUN([AC_C_ALWAYS_INLINE],
-    [AC_C_INLINE
-    if test x"$GCC" = x"yes" -a x"$ac_cv_c_inline" = x"inline"; then
-	AC_MSG_CHECKING([for always_inline])
-	SAVE_CFLAGS="$CFLAGS"
-	CFLAGS="$CFLAGS -Wall -Werror"
-	AC_TRY_COMPILE([],
-	    [__attribute__ ((__always_inline__)) void f (void);
-	    #ifdef __cplusplus
-	    42 = 42;	// obviously illegal - we want c++ to fail here
-	    #endif],
-	    [ac_cv_always_inline=yes],[ac_cv_always_inline=no])
-	CFLAGS="$SAVE_CFLAGS"
-	AC_MSG_RESULT([$ac_cv_always_inline])
-	if test x"$ac_cv_always_inline" = x"yes"; then
-	    AC_DEFINE_UNQUOTED([inline],[__attribute__ ((__always_inline__))])
-	fi
-    fi])
-
-dnl AC_C_ATTRIBUTE_ALIGNED
-dnl define ATTRIBUTE_ALIGNED_MAX to the maximum alignment if this is supported
-AC_DEFUN([AC_C_ATTRIBUTE_ALIGNED],
-    [SAV_CFLAGS=$CFLAGS;
-    if test x"$GCC" = xyes; then CFLAGS="$CFLAGS -Werror"; fi
-    AC_CACHE_CHECK([__attribute__ ((aligned ())) support],
-	[ac_cv_c_attribute_aligned],
-	[ac_cv_c_attribute_aligned=0
-	for ac_cv_c_attr_align_try in 2 4 8 16 32 64; do
-	    AC_TRY_COMPILE([],
-		[static char c __attribute__ ((aligned($ac_cv_c_attr_align_try))) = 0; return c;],
-		[ac_cv_c_attribute_aligned=$ac_cv_c_attr_align_try])
-	done])
-    if test x"$ac_cv_c_attribute_aligned" != x"0"; then
-	AC_DEFINE_UNQUOTED([ATTRIBUTE_ALIGNED_MAX],
-	    [$ac_cv_c_attribute_aligned],[maximum supported data alignment])
-    fi
-    CFLAGS=$SAV_CFLAGS])
-
-dnl AC_TRY_CFLAGS (CFLAGS, [ACTION-IF-WORKS], [ACTION-IF-FAILS])
-dnl check if $CC supports a given set of cflags
-AC_DEFUN([AC_TRY_CFLAGS],
-    [AC_MSG_CHECKING([if $CC supports $1 flags])
-    SAVE_CFLAGS="$CFLAGS"
-    CFLAGS="$1"
-    AC_TRY_COMPILE([],[],[ac_cv_try_cflags_ok=yes],[ac_cv_try_cflags_ok=no])
-    CFLAGS="$SAVE_CFLAGS"
-    AC_MSG_RESULT([$ac_cv_try_cflags_ok])
-    if test x"$ac_cv_try_cflags_ok" = x"yes"; then
-	ifelse([$2],[],[:],[$2])
-    else
-	ifelse([$3],[],[:],[$3])
-    fi])
-
-dnl AC_LIBTOOL_NON_PIC ([ACTION-IF-WORKS], [ACTION-IF-FAILS])
-dnl check for nonbuggy libtool -prefer-non-pic
-AC_DEFUN([AC_LIBTOOL_NON_PIC],
-    [AC_MSG_CHECKING([if libtool supports -prefer-non-pic flag])
-    mkdir ac_test_libtool; cd ac_test_libtool; ac_cv_libtool_non_pic=no
-    echo "int g (int i); int f (int i) {return g (i);}" >f.c
-    echo "int (* hook) (int) = 0; int g (int i) {if (hook) i = hook (i); return i + 1;}" >g.c
-    ../libtool --mode=compile $CC $CFLAGS -prefer-non-pic \
-		-c f.c >/dev/null 2>&1 && \
-	../libtool --mode=compile $CC $CFLAGS -prefer-non-pic \
-		-c g.c >/dev/null 2>&1 && \
-	../libtool --mode=link $CC $CFLAGS -prefer-non-pic -o libfoo.la \
-		-rpath / f.lo g.lo >/dev/null 2>&1 &&
-	ac_cv_libtool_non_pic=yes
-    cd ..; rm -fr ac_test_libtool; AC_MSG_RESULT([$ac_cv_libtool_non_pic])
-    if test x"$ac_cv_libtool_non_pic" = x"yes"; then
-	ifelse([$1],[],[:],[$1])
-    else
-	ifelse([$2],[],[:],[$2])
-    fi])
-
 dnl AC_CHECK_GENERATE_INTTYPES_H (INCLUDE-DIRECTORY)
 dnl generate a default inttypes.h if the header file does not exist already
 AC_DEFUN([AC_CHECK_GENERATE_INTTYPES],
@@ -140,7 +39,7 @@ dnl Remember, if the system already had a valid <stdint.h>, the generated
 dnl file will include it directly. No need for fuzzy HAVE_STDINT_H things...
 dnl
 dnl @, (status: used on new platforms) (see http://ac-archive.sf.net/gstdint/)
-dnl @version $Id: acinclude.m4,v 1.11 2003/10/04 05:38:30 walken Exp $
+dnl @version $Id$
 dnl @author  Guido Draheim <guidod@gmx.de> 
 
 AC_DEFUN([AX_CREATE_STDINT_H],

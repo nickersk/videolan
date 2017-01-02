@@ -8,7 +8,6 @@ AC_CONFIG_FILES([Makefile include/Makefile test/Makefile
     libdca/libdca.pc libdca/libdts.pc])
 AM_INIT_AUTOMAKE([1.5 dist-bzip2 no-dist-gzip check-news -Wall])
 AC_CONFIG_HEADERS([config.h])
-AM_MAINTAINER_MODE
 AC_CANONICAL_HOST
 
 dnl Checks for compiler

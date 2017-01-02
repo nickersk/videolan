@@ -211,7 +211,7 @@ int dca_frame (dca_state_t * state, uint8_t * buf, int * flags,
                level_t * level, sample_t bias)
 {
     int i, j;
-    static float adj_table[] = { 1.0, 1.1250, 1.2500, 1.4375 };
+    static const float adj_table[] = { 1.0, 1.1250, 1.2500, 1.4375 };
 
     dca_bitstream_init (state, buf, state->word_mode, state->bigendian_mode);
 

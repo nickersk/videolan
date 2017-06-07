@@ -842,7 +842,10 @@ static struct file_entry *_read_file_entry(udfread *udf,
         while (fe->num_ad > 0 &&
                fe->data.ad[fe->num_ad - 1].extent_type == ECMA_AD_EXTENT_AD) {
 
-            icb = &fe->data.ad[fe->num_ad - 1];
+            /* drop pointer to this extent from the end of AD list */
+            fe->num_ad--;
+
+            icb = &fe->data.ad[fe->num_ad];
             udf_log("_read_file_entry: reading allocation extent @%u\n", icb->lba);
 
             buf = _read_metadata(udf, icb, &tag_id);

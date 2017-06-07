@@ -339,17 +339,11 @@ int decode_allocation_extent(struct file_entry **p_fe, const uint8_t *p, size_t 
         return 0;
     }
 
-    fe = (struct file_entry *)realloc(fe, sizeof(struct file_entry) + sizeof(struct long_ad) * (fe->num_ad + num_ad - 1));
+    fe = (struct file_entry *)realloc(fe, sizeof(struct file_entry) + sizeof(struct long_ad) * (fe->num_ad + num_ad));
     if (!fe) {
         return -1;
     }
     *p_fe = fe;
-
-    /* drop pointer to this extent from the end of ads */
-    if (fe->data.ad[fe->num_ad - 1].extent_type != ECMA_AD_EXTENT_AD) {
-        ecma_error("decode_allocation_extent: missing link ad\n");
-    }
-    fe->num_ad--;
 
     /* decode new allocation descriptors */
     _decode_file_ads(p + 24, fe->ad_type, partition, &fe->data.ad[fe->num_ad], num_ad);

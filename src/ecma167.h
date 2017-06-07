@@ -223,6 +223,7 @@ struct file_entry {
 
         /* inline file */
         struct {
+            uint32_t       information_length; /* recorded information length, may be different than file length */
             uint8_t        content[1]; /* content of small files is embedded here */
         } data;
     } u;

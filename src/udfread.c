@@ -963,7 +963,7 @@ static struct udf_dir *_read_dir(udfread *udf, const struct long_ad *icb)
     if (fe->content_inline) {
         dir = (struct udf_dir *)calloc(1, sizeof(struct udf_dir));
         if (dir) {
-            if (_parse_dir(&fe->u.data.content[0], fe->length, dir) < 0) {
+            if (_parse_dir(&fe->u.data.content[0], fe->u.data.information_length, dir) < 0) {
                 udf_error("failed parsing inline directory file\n");
                 _free_dir(&dir);
             }

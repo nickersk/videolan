@@ -306,6 +306,7 @@ static struct file_entry *_decode_file_entry(const uint8_t *p, size_t size,
         /* data of small files can be embedded in file entry */
         /* copy embedded file data */
         fe->content_inline = 1;
+        fe->u.data.information_length = l_ad;
         memcpy(fe->u.data.content, p + p_ad, l_ad);
     } else {
         fe->u.ads.num_ad = num_ad;

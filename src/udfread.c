@@ -514,13 +514,13 @@ static int _map_metadata_partition(udfread_block_input *input,
 
         if (fe->content_inline) {
             udf_error("invalid metadata file (content inline)\n");
-        } else if (!fe->num_ad) {
+        } else if (!fe->u.ads.num_ad) {
             udf_error("invalid metadata file (no allocation descriptors)\n");
         } else if (fe->file_type == UDF_FT_METADATA) {
-            part->p[1].lba = pd->start_block + fe->data.ad[0].lba;
+            part->p[1].lba = pd->start_block + fe->u.ads.ad[0].lba;
             udf_log("metadata file at lba %u\n", part->p[1].lba);
         } else if (fe->file_type == UDF_FT_METADATA_MIRROR) {
-            part->p[1].mirror_lba = pd->start_block + fe->data.ad[0].lba;
+            part->p[1].mirror_lba = pd->start_block + fe->u.ads.ad[0].lba;
             udf_log("metadata mirror file at lba %u\n", part->p[1].mirror_lba);
         } else {
             udf_error("unknown metadata file type %u\n", fe->file_type);
@@ -839,13 +839,13 @@ static struct file_entry *_read_file_entry(udfread *udf,
 
     /* read possible additional allocation extents */
     if (fe) {
-        while (fe->num_ad > 0 &&
-               fe->data.ad[fe->num_ad - 1].extent_type == ECMA_AD_EXTENT_AD) {
+        while (fe->u.ads.num_ad > 0 &&
+               fe->u.ads.ad[fe->u.ads.num_ad - 1].extent_type == ECMA_AD_EXTENT_AD) {
 
             /* drop pointer to this extent from the end of AD list */
-            fe->num_ad--;
+            fe->u.ads.num_ad--;
 
-            icb = &fe->data.ad[fe->num_ad];
+            icb = &fe->u.ads.ad[fe->u.ads.num_ad];
             udf_log("_read_file_entry: reading allocation extent @%u\n", icb->lba);
 
             buf = _read_metadata(udf, icb, &tag_id);
@@ -963,16 +963,16 @@ static struct udf_dir *_read_dir(udfread *udf, const struct long_ad *icb)
     if (fe->content_inline) {
         dir = (struct udf_dir *)calloc(1, sizeof(struct udf_dir));
         if (dir) {
-            if (_parse_dir(&fe->data.content[0], fe->length, dir) < 0) {
+            if (_parse_dir(&fe->u.data.content[0], fe->length, dir) < 0) {
                 udf_error("failed parsing inline directory file\n");
                 _free_dir(&dir);
             }
         }
 
-    } else if (fe->num_ad == 0) {
+    } else if (fe->u.ads.num_ad == 0) {
         udf_error("empty directory file");
     } else {
-        dir = _read_dir_file(udf, &fe->data.ad[0]);
+        dir = _read_dir_file(udf, &fe->u.ads.ad[0]);
     }
 
     free_file_entry(&fe);
@@ -1400,8 +1400,8 @@ static uint32_t _file_lba(UDFFILE *p, uint32_t file_block)
 
     fe = p->fe;
 
-    for (i = 0; i < fe->num_ad; i++) {
-        const struct long_ad *ad = &fe->data.ad[0];
+    for (i = 0; i < fe->u.ads.num_ad; i++) {
+        const struct long_ad *ad = &fe->u.ads.ad[0];
         ad_size = (ad[i].length + UDF_BLOCK_SIZE - 1) / UDF_BLOCK_SIZE;
         if (file_block < ad_size) {
 
@@ -1560,7 +1560,7 @@ ssize_t udfread_file_read(UDFFILE *p, void *buf, size_t bytes)
 
     /* small files may be stored inline in file entry */
     if (p->fe->content_inline) {
-        memcpy(buf, &p->fe->data.content + p->pos, bytes);
+        memcpy(buf, &p->fe->u.data.content + p->pos, bytes);
         p->pos += bytes;
         return bytes;
     }

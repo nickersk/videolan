@@ -214,11 +214,18 @@ struct file_entry {
     uint8_t        content_inline; /* 1 if file data is embedded in file entry */
     uint8_t        ad_type;        /* from icb_flags; used when parsing allocation extents */
 
-    uint32_t       num_ad;
     union {
-        struct long_ad ad[1];      /* Most files have only single extent, files in 3D BDs can have 100+. */
-        uint8_t        content[1]; /* content of small files is embedded here */
-    } data;
+        /* "normal" file */
+        struct {
+            uint32_t       num_ad;
+            struct long_ad ad[1];      /* Most files have only single extent, files in 3D BDs can have 100+. */
+        } ads;
+
+        /* inline file */
+        struct {
+            uint8_t        content[1]; /* content of small files is embedded here */
+        } data;
+    } u;
 };
 
 struct file_entry *decode_file_entry    (const uint8_t *p, size_t size, uint16_t partition);

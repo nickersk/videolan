@@ -300,16 +300,16 @@ static struct file_entry *_decode_file_entry(const uint8_t *p, size_t size,
 
     fe->file_type = tag.file_type;
     fe->length    = _get_u64(p + 56);
-    fe->num_ad    = num_ad;
     fe->ad_type   = tag.flags & 7;
 
     if (content_inline) {
         /* data of small files can be embedded in file entry */
         /* copy embedded file data */
         fe->content_inline = 1;
-        memcpy(fe->data.content, p + p_ad, l_ad);
+        memcpy(fe->u.data.content, p + p_ad, l_ad);
     } else {
-        _decode_file_ads(p + p_ad, fe->ad_type, partition, &fe->data.ad[0], num_ad);
+        fe->u.ads.num_ad = num_ad;
+        _decode_file_ads(p + p_ad, fe->ad_type, partition, &fe->u.ads.ad[0], num_ad);
     }
 
     return fe;
@@ -339,15 +339,15 @@ int decode_allocation_extent(struct file_entry **p_fe, const uint8_t *p, size_t 
         return 0;
     }
 
-    fe = (struct file_entry *)realloc(fe, sizeof(struct file_entry) + sizeof(struct long_ad) * (fe->num_ad + num_ad));
+    fe = (struct file_entry *)realloc(fe, sizeof(struct file_entry) + sizeof(struct long_ad) * (fe->u.ads.num_ad + num_ad));
     if (!fe) {
         return -1;
     }
     *p_fe = fe;
 
     /* decode new allocation descriptors */
-    _decode_file_ads(p + 24, fe->ad_type, partition, &fe->data.ad[fe->num_ad], num_ad);
-    fe->num_ad += num_ad;
+    _decode_file_ads(p + 24, fe->ad_type, partition, &fe->u.ads.ad[fe->u.ads.num_ad], num_ad);
+    fe->u.ads.num_ad += num_ad;
 
     return 0;
 }

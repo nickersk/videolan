@@ -972,6 +972,9 @@ static struct udf_dir *_read_dir(udfread *udf, const struct long_ad *icb)
     } else if (fe->u.ads.num_ad == 0) {
         udf_error("empty directory file");
     } else {
+        if (fe->u.ads.num_ad > 1) {
+            udf_error("unsupported fragmented directory file\n");
+        }
         dir = _read_dir_file(udf, &fe->u.ads.ad[0]);
     }
 

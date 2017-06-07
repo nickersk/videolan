@@ -1370,7 +1370,7 @@ UDFFILE *udfread_file_open(udfread *udf, const char *path)
 
 int64_t udfread_file_size(UDFFILE *p)
 {
-    if (p && p->fe) {
+    if (p) {
         return p->fe->length;
     }
     return -1;

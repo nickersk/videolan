@@ -1586,6 +1586,29 @@ static ssize_t _read(UDFFILE *p, void *buf, size_t bytes)
     return bytes;
 }
 
+static ssize_t _read_inline(UDFFILE *p, void *buf, size_t bytes)
+{
+    uint64_t information_length = p->fe->u.data.information_length;
+    size_t   pad_size = 0;
+
+    if (p->pos + bytes > information_length) {
+        udf_log("read hits padding in inline file\n");
+        if (p->pos > information_length) {
+            pad_size = bytes;
+        } else {
+            pad_size = (size_t)(p->pos + bytes - information_length);
+        }
+        memset((char*)buf + bytes - pad_size, 0, pad_size);
+    }
+
+    if (pad_size < bytes) {
+        memcpy(buf, &p->fe->u.data.content[p->pos], bytes - pad_size);
+    }
+
+    p->pos = p->pos + bytes;
+    return (ssize_t)bytes;
+}
+
 #define ALIGN(p, align) \
   (uint8_t *)( ((uintptr_t)(p) + ((align)-1)) & ~((uintptr_t)((align)-1)))
 
@@ -1612,9 +1635,7 @@ ssize_t udfread_file_read(UDFFILE *p, void *buf, size_t bytes)
 
     /* small files may be stored inline in file entry */
     if (p->fe->content_inline) {
-        memcpy(buf, &p->fe->u.data.content + p->pos, bytes);
-        p->pos += bytes;
-        return bytes;
+        return _read_inline(p, buf, bytes);
     }
 
     /* allocate temp storage for input block */

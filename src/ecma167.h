@@ -193,7 +193,7 @@ struct file_identifier {
     uint8_t        filename[256];
 };
 
-size_t decode_file_identifier(const uint8_t *p, struct file_identifier *fi);
+size_t decode_file_identifier(const uint8_t *p, size_t size, struct file_identifier *fi);
 
 /* File Entry (ECMA 167, 4/14.9) */
 /* Extended File Entry (ECMA 167, 4/14.17) */

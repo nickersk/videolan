@@ -891,6 +891,7 @@ static int _parse_dir(const uint8_t *data, uint32_t length, struct udf_dir *dir)
     int            tag_id;
 
     while (p < end) {
+        size_t used;
 
         tag_id = decode_descriptor_tag(p);
         if (tag_id != ECMA_FileIdentifierDescriptor) {
@@ -903,7 +904,12 @@ static int _parse_dir(const uint8_t *data, uint32_t length, struct udf_dir *dir)
             return -1;
         }
 
-        p += decode_file_identifier(p, &fid);
+        used = decode_file_identifier(p, end - p, &fid);
+        if (used == 0) {
+            /* not enough data. keep the entries we already have. */
+            break;
+        }
+        p += used;
 
         if (fid.characteristic & CHAR_FLAG_PARENT) {
             continue;

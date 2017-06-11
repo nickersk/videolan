@@ -158,15 +158,25 @@ void decode_file_set_descriptor(const uint8_t *p, struct file_set_descriptor *fs
 }
 
 /* File Identifier (ECMA 167 4/14.4) */
-size_t decode_file_identifier(const uint8_t *p, struct file_identifier *fi)
+size_t decode_file_identifier(const uint8_t *p, size_t size, struct file_identifier *fi)
 {
     size_t l_iu; /* length of implementation use field */
+
+    if (size < 38) {
+        ecma_error("not enough data\n");
+        return 0;
+    }
 
     fi->characteristic = _get_u8(p + 18);
     fi->filename_len   = _get_u8(p + 19);
     decode_long_ad(p + 20, &fi->icb);
 
     l_iu = _get_u16(p + 36);
+
+    if (size < 38 + l_iu + fi->filename_len) {
+        ecma_error("not enough data\n");
+        return 0;
+    }
 
     if (fi->filename_len) {
         memcpy(fi->filename, p + 38 + l_iu, fi->filename_len);

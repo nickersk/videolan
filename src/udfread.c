@@ -387,6 +387,8 @@ static int _search_vds(udfread_block_input *input, int part_number,
 
     udf_trace("reading Volume Descriptor Sequence at lba %u, len %u bytes\n", loc->lba, loc->length);
 
+    memset(vds, 0, sizeof(*vds));
+
     /* parse Volume Descriptor Sequence */
     for (lba = loc->lba; lba < end_lba; lba++) {
 
@@ -465,6 +467,7 @@ static int _validate_logical_volume(const struct logical_volume_descriptor *lvd,
     /* UDF 2.60 2.1.5.2 */
     if (_check_domain_identifier(&lvd->domain_id, lvd_domain_id) < 0) {
         udf_error("unknown Domain ID in Logical Volume Descriptor: %1.22s\n", lvd->domain_id.identifier);
+        return -1;
 
     } else {
 

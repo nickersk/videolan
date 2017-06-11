@@ -845,7 +845,7 @@ static struct file_entry *_read_file_entry(udfread *udf,
     free(buf);
 
     /* read possible additional allocation extents */
-    if (fe) {
+    if (fe && !fe->content_inline) {
         while (fe->u.ads.num_ad > 0 &&
                fe->u.ads.ad[fe->u.ads.num_ad - 1].extent_type == ECMA_AD_EXTENT_AD) {
 

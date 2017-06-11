@@ -182,6 +182,10 @@ static char *_cs0_to_utf8(const uint8_t *cs0, size_t size)
         udf_error("out of memory\n");
         return NULL;
     }
+    if (size < 1) {
+        udf_error("too short cs0 string\n");
+        return NULL;
+    }
 
     switch (cs0[0]) {
     case 8:

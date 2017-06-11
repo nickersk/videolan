@@ -890,7 +890,11 @@ static int _parse_dir(const uint8_t *data, uint32_t length, struct udf_dir *dir)
     const uint8_t *end = data + length;
     int            tag_id;
 
-    while (p < end) {
+    if (length < 16) {
+        return 0;
+    }
+
+    while (p < end - 16) {
         size_t used;
 
         tag_id = decode_descriptor_tag(p);

@@ -195,7 +195,7 @@ static char *_cs0_to_utf8(const uint8_t *cs0, size_t size)
         }
         break;
     case 16:
-        for (i = 1; i < size; i+=2) {
+        for (i = 1; i < size - 1; i+=2) {
             uint16_t ch = cs0[i + 1] | (cs0[i] << 8);
             utf16_to_utf8(out, out_pos, out_size, ch);
         }

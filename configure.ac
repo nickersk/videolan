@@ -73,7 +73,7 @@ AS_IF([test "${SYS}" != "mingw32"], [
 dnl compiler warnings
 CC_CHECK_CFLAGS_APPEND([-Wall -Wsign-compare -Wextra])
 CC_CHECK_CFLAGS_APPEND([-std=c99 -pedantic])
-CC_CHECK_CFLAGS_APPEND([-Wdisabled-optimization -Wpointer-arith]dnl
+CC_CHECK_CFLAGS_APPEND([-Wdisabled-optimization -Wpointer-arith ]dnl
 [-Wredundant-decls -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef ]dnl
 [-Wmissing-prototypes -Wshadow])
 CC_CHECK_CFLAGS_APPEND([-Werror=implicit-function-declaration ]dnl

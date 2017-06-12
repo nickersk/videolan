@@ -350,7 +350,7 @@ int decode_allocation_extent(struct file_entry **p_fe, const uint8_t *p, size_t 
         return 0;
     }
 
-    fe = (struct file_entry *)realloc(fe, sizeof(struct file_entry) + sizeof(struct long_ad) * (fe->u.ads.num_ad + num_ad));
+    fe = (struct file_entry *)realloc(*p_fe, sizeof(struct file_entry) + sizeof(struct long_ad) * (fe->u.ads.num_ad + num_ad));
     if (!fe) {
         return -1;
     }

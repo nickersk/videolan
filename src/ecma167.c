@@ -106,7 +106,7 @@ void decode_primary_volume(const uint8_t *p, struct primary_volume_descriptor *p
     memcpy(pvd->volume_set_identifier, p + 72, 128);
 }
 
-/* Anchor Volume Description Pointer (ECMA 167 3/10.2) */
+/* Anchor Volume Descriptor Pointer (ECMA 167 3/10.2) */
 void decode_avdp(const uint8_t *p, struct anchor_volume_descriptor *avdp)
 {
     /* Main volume descriptor sequence extent */
@@ -114,6 +114,12 @@ void decode_avdp(const uint8_t *p, struct anchor_volume_descriptor *avdp)
 
     /* Reserve (backup) volume descriptor sequence extent */
     _decode_extent_ad(p + 24, &avdp->rvds);
+}
+
+/* Volume Descriptor Pointer (ECMA 167 3/10.3) */
+void decode_vdp(const uint8_t *p, struct volume_descriptor_pointer *vdp)
+{
+    _decode_extent_ad(p + 20, &vdp->next_extent);
 }
 
 /* Partition Descriptor (ECMA 167 3/10.5) */

@@ -87,6 +87,7 @@ enum tag_identifier {
     /* ECMA 167, 3/7.2.1) */
     ECMA_PrimaryVolumeDescriptor              = 1,
     ECMA_AnchorVolumeDescriptorPointer        = 2,
+    ECMA_VolumeDescriptorPointer              = 3,
     ECMA_PartitionDescriptor                  = 5,
     ECMA_LogicalVolumeDescriptor              = 6,
     ECMA_TerminatingDescriptor                = 8,
@@ -121,6 +122,14 @@ struct anchor_volume_descriptor {
 };
 
 void decode_avdp(const uint8_t *p, struct anchor_volume_descriptor *avdp);
+
+/* Volume Descriptor Pointer (ECMA 167, 3/10.3) */
+
+struct volume_descriptor_pointer {
+    struct extent_ad next_extent; /* Next Volume Descriptor Sequence Extent */
+};
+
+void decode_vdp(const uint8_t *p, struct volume_descriptor_pointer *vdp);
 
 /* Partition Descriptor (ECMA 167, 3/10.5) */
 

@@ -379,15 +379,19 @@ static int _search_vds(udfread_block_input *input, int part_number,
                        struct volume_descriptor_set *vds)
 
 {
+    struct volume_descriptor_pointer vdp;
     uint8_t  buf[UDF_BLOCK_SIZE];
     int      tag_id;
     uint32_t lba;
-    uint32_t end_lba = loc->lba + loc->length / UDF_BLOCK_SIZE;
+    uint32_t end_lba;
     int      have_part = 0, have_lvd = 0, have_pvd = 0;
 
+    memset(vds, 0, sizeof(*vds));
+
+next_extent:
     udf_trace("reading Volume Descriptor Sequence at lba %u, len %u bytes\n", loc->lba, loc->length);
 
-    memset(vds, 0, sizeof(*vds));
+    end_lba = loc->lba + loc->length / UDF_BLOCK_SIZE;
 
     /* parse Volume Descriptor Sequence */
     for (lba = loc->lba; lba < end_lba; lba++) {
@@ -395,6 +399,11 @@ static int _search_vds(udfread_block_input *input, int part_number,
         tag_id = _read_descriptor_block(input, lba, buf);
 
         switch (tag_id) {
+
+        case ECMA_VolumeDescriptorPointer:
+            decode_vdp(buf, &vdp);
+            loc = &vdp.next_extent;
+            goto next_extent;
 
         case ECMA_PrimaryVolumeDescriptor:
             udf_log("Primary Volume Descriptor in lba %u\n", lba);

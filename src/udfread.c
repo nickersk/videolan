@@ -176,14 +176,16 @@ static char *_cs0_to_utf8(const uint8_t *cs0, size_t size)
     size_t   out_pos = 0;
     size_t   out_size = size;
     size_t   i;
-    uint8_t *out = (uint8_t *)malloc(size);
+    uint8_t *out;
 
-    if (!out) {
-        udf_error("out of memory\n");
-        return NULL;
-    }
     if (size < 1) {
         udf_error("too short cs0 string\n");
+        return NULL;
+    }
+
+    out = (uint8_t *)malloc(size);
+    if (!out) {
+        udf_error("out of memory\n");
         return NULL;
     }
 

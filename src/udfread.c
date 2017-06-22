@@ -908,6 +908,10 @@ static int _parse_dir(const uint8_t *data, uint32_t length, struct udf_dir *dir)
     while (p < end - 16) {
         size_t used;
 
+        if (dir->num_entries == UINT32_MAX) {
+            return 0;
+        }
+
         tag_id = decode_descriptor_tag(p);
         if (tag_id != ECMA_FileIdentifierDescriptor) {
             udf_error("unexpected tag %d in directory file\n", tag_id);

@@ -1086,13 +1086,14 @@ static struct udf_dir *_read_subdir(udfread *udf, struct udf_dir *dir, uint32_t 
     return dir->subdirs[index];
 }
 
-static int _scan_dir(const struct udf_dir *dir, const char *filename)
+static int _scan_dir(const struct udf_dir *dir, const char *filename, uint32_t *index)
 {
     uint32_t i;
 
     for (i = 0; i < dir->num_entries; i++) {
         if (!strcmp(filename, dir->files[i].filename)) {
-            return i;
+            *index = i;
+            return 0;
         }
     }
 
@@ -1124,9 +1125,8 @@ static int _find_file(udfread *udf, const char *path,
     }
 
     while (token) {
-
-        int index = _scan_dir(current_dir, token);
-        if (index < 0) {
+        uint32_t index;
+        if (_scan_dir(current_dir, token, &index) < 0) {
             udf_log("_find_file: entry %s not found\n", token);
             goto error;
         }

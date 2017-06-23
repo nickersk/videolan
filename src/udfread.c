@@ -1588,6 +1588,10 @@ ssize_t udfread_file_read(UDFFILE *p, void *buf, size_t bytes)
         return -1;
     }
 
+    if (p->pos >= udfread_file_size(p)) {
+        return 0;
+    }
+
     /* limit range to file size */
     if ((uint64_t)p->pos + bytes > (uint64_t)udfread_file_size(p)) {
         bytes = udfread_file_size(p) - p->pos;

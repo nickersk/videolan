@@ -1427,7 +1427,7 @@ void udfread_file_close(UDFFILE *p)
  * block access
  */
 
-static uint32_t _file_lba(UDFFILE *p, uint32_t file_block)
+static uint32_t _file_lba(UDFFILE *p, uint32_t file_block, uint32_t *extent_length)
 {
     const struct file_entry *fe;
     unsigned int i;
@@ -1454,6 +1454,10 @@ static uint32_t _file_lba(UDFFILE *p, uint32_t file_block)
 
             if (ad[i].partition != p->udf->part.p[0].number) {
                 udf_error("file partition %u != %u\n", ad[i].partition, p->udf->part.p[0].number);
+            }
+
+            if (extent_length) {
+                *extent_length = ad_size - file_block;
             }
             return p->udf->part.p[0].lba + ad[i].lba + file_block;
         }
@@ -1484,7 +1488,7 @@ uint32_t udfread_file_lba(UDFFILE *p, uint32_t file_block)
         return 0;
     }
 
-    return _file_lba(p, file_block);
+    return _file_lba(p, file_block, NULL);
 }
 
 uint32_t udfread_read_blocks(UDFFILE *p, void *buf, uint32_t file_block, uint32_t num_blocks, int flags)
@@ -1499,10 +1503,12 @@ uint32_t udfread_read_blocks(UDFFILE *p, void *buf, uint32_t file_block, uint32_
         return 0;
     }
 
-    for (i = 0; i < num_blocks; i++) {
-        uint32_t lba = _file_lba(p, file_block + i);
+    for (i = 0; i < num_blocks; ) {
+        uint32_t extent_length = 0;
+        uint32_t lba;
         uint8_t *block = (uint8_t *)buf + UDF_BLOCK_SIZE * i;
 
+        lba = _file_lba(p, file_block + i, &extent_length);
         udf_trace("map block %u to lba %u\n", file_block + i, lba);
 
         if (!lba) {
@@ -1511,15 +1517,22 @@ uint32_t udfread_read_blocks(UDFFILE *p, void *buf, uint32_t file_block, uint32_
             if (file_block + i < file_blocks) {
                 udf_trace("zero-fill unallocated / unwritten block %u\n", file_block + i);
                 memset(block, 0, UDF_BLOCK_SIZE);
+                i++;
                 continue;
             }
             udf_error("block %u outside of file (size %u blocks)\n", file_block + i, file_blocks);
             break;
         }
 
-        if (_read_blocks(p->udf->input, lba, block, 1, flags) != 1) {
+        if (extent_length > num_blocks - i) {
+            extent_length = num_blocks - i;
+        }
+
+        extent_length = _read_blocks(p->udf->input, lba, block, extent_length, flags);
+        if (extent_length < 1) {
             break;
         }
+        i += extent_length;
     }
     return i;
 }

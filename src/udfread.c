@@ -1599,6 +1599,9 @@ ssize_t udfread_file_read(UDFFILE *p, void *buf, size_t bytes)
     /* allocate temp storage for input block */
     if (!p->block) {
         p->block_mem = malloc(2 * UDF_BLOCK_SIZE);
+        if (!p->block_mem) {
+            return -1;
+        }
         p->block = ALIGN(p->block_mem, UDF_BLOCK_SIZE);
     }
 

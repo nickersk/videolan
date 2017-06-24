@@ -1633,23 +1633,27 @@ int64_t udfread_file_tell(UDFFILE *p)
 
 int64_t udfread_file_seek(UDFFILE *p, int64_t pos, int whence)
 {
-    if (p) {
-        switch (whence) {
-            case UDF_SEEK_CUR:
-                pos += p->pos;
-                break;
-            case UDF_SEEK_END:
-                pos = udfread_file_size(p) + pos;
-                break;
-            case UDF_SEEK_SET:
-            default:
-                break;
-        }
-        if (pos >= 0 && pos <= udfread_file_size(p)) {
-            p->pos = pos;
-            p->block_valid = 0;
-            return p->pos;
-        }
+    if (!p) {
+        return -1;
+    }
+
+    switch (whence) {
+        case UDF_SEEK_CUR:
+            pos += p->pos;
+            break;
+        case UDF_SEEK_END:
+            pos = udfread_file_size(p) + pos;
+            break;
+        case UDF_SEEK_SET:
+            break;
+        default:
+            break;
+    }
+
+    if (pos >= 0 && pos <= udfread_file_size(p)) {
+        p->pos = pos;
+        p->block_valid = 0;
+        return p->pos;
     }
 
     return -1;

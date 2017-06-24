@@ -599,6 +599,11 @@ static int _parse_udf_partition_maps(udfread_block_input *input,
 
             /* ECMA 167 Type 1 partition map */
 
+            if (len != 6) {
+                udf_error("invalid type 1 partition map length %d\n", (int)len);
+                break;
+            }
+
             ref = _get_u16(map + 4);
             udf_log("partition map: %u: type 1 partition, ref %u\n", i, ref);
 
@@ -618,6 +623,11 @@ static int _parse_udf_partition_maps(udfread_block_input *input,
         } else if (type == 2) {
 
             /* Type 2 partition map, UDF 2.60 2.2.18 */
+
+            if (len != 64) {
+                udf_error("invalid type 2 partition map length %d\n", (int)len);
+                break;
+            }
 
             struct entity_id type_id;
             decode_entity_id(map + 4, &type_id);

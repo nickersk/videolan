@@ -150,6 +150,11 @@ void decode_logical_volume(const uint8_t *p, struct logical_volume_descriptor *l
         map_size = sizeof(lvd->partition_map_table);
     }
 
+    /* input size is one block (2048 bytes) */
+    if (map_size > 2048 - 440) {
+        map_size = 2048 - 440;
+    }
+
     memcpy(lvd->partition_map_table, p + 440, map_size);
 }
 

@@ -584,6 +584,11 @@ static int _parse_udf_partition_maps(udfread_block_input *input,
         uint8_t  len  = _get_u8(map + 1);
         uint16_t ref;
 
+        if (len < 2) {
+            udf_error("invalid partition map length %d\n", (int)len);
+            break;
+        }
+
         udf_trace("map %u: type %u\n", i, type);
         if (map + len > end) {
             udf_error("partition map table too short !\n");

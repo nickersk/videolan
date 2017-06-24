@@ -249,7 +249,7 @@ static uint32_t _read_blocks(udfread_block_input *input,
 
     result = input->read(input, lba, buf, nblocks, flags);
 
-    return result < 0 ? 0 : result;
+    return result < 0 ? 0 : (uint32_t)result;
 }
 
 static int _read_descriptor_block(udfread_block_input *input, uint32_t lba, uint8_t *buf)
@@ -923,7 +923,7 @@ static int _parse_dir(const uint8_t *data, uint32_t length, struct udf_dir *dir)
             return -1;
         }
 
-        used = decode_file_identifier(p, end - p, &fid);
+        used = decode_file_identifier(p, (size_t)(end - p), &fid);
         if (used == 0) {
             /* not enough data. keep the entries we already have. */
             break;
@@ -1409,7 +1409,7 @@ UDFFILE *udfread_file_open(udfread *udf, const char *path)
 int64_t udfread_file_size(UDFFILE *p)
 {
     if (p) {
-        return p->fe->length;
+        return (int64_t)p->fe->length;
     }
     return -1;
 }
@@ -1562,7 +1562,7 @@ static ssize_t _read(UDFFILE *p, void *buf, size_t bytes)
         }
         memcpy(buf, p->block + pos_off, chunk_size);
         p->pos += (uint64_t)chunk_size;
-        return chunk_size;
+        return (ssize_t)chunk_size;
     }
 
     /* read full block(s) ? */
@@ -1583,7 +1583,7 @@ static ssize_t _read(UDFFILE *p, void *buf, size_t bytes)
     p->block_valid = 1;
     memcpy(buf, p->block, bytes);
     p->pos += bytes;
-    return bytes;
+    return (ssize_t)bytes;
 }
 
 static ssize_t _read_inline(UDFFILE *p, void *buf, size_t bytes)
@@ -1630,7 +1630,7 @@ ssize_t udfread_file_read(UDFFILE *p, void *buf, size_t bytes)
 
     /* limit range to file size */
     if (p->pos + bytes > p->fe->length) {
-        bytes = p->fe->length - p->pos;
+        bytes = (size_t)(p->fe->length - p->pos);
     }
 
     /* small files may be stored inline in file entry */
@@ -1659,7 +1659,7 @@ ssize_t udfread_file_read(UDFFILE *p, void *buf, size_t bytes)
             return -1;
         }
         bufpt += r;
-        bytes -= r;
+        bytes -= (size_t)r;
     }
 
     return (intptr_t)bufpt - (intptr_t)buf;

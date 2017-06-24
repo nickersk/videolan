@@ -1362,7 +1362,7 @@ struct udfread_file {
     struct file_entry *fe;
 
     /* byte stream access */
-    int64_t     pos;
+    uint64_t    pos;
     uint8_t    *block;
     int         block_valid;
 
@@ -1561,7 +1561,7 @@ static ssize_t _read(UDFFILE *p, void *buf, size_t bytes)
             chunk_size = bytes;
         }
         memcpy(buf, p->block + pos_off, chunk_size);
-        p->pos += (int64_t)chunk_size;
+        p->pos += (uint64_t)chunk_size;
         return chunk_size;
     }
 
@@ -1617,20 +1617,20 @@ ssize_t udfread_file_read(UDFFILE *p, void *buf, size_t bytes)
     uint8_t *bufpt = (uint8_t *)buf;
 
     /* sanity checks */
-    if (!p || !buf || p->pos < 0) {
+    if (!p || !buf) {
         return -1;
     }
     if ((ssize_t)bytes < 0 || (int64_t)bytes < 0) {
         return -1;
     }
 
-    if (p->pos >= udfread_file_size(p)) {
+    if (p->pos >= p->fe->length) {
         return 0;
     }
 
     /* limit range to file size */
-    if ((uint64_t)p->pos + bytes > (uint64_t)udfread_file_size(p)) {
-        bytes = udfread_file_size(p) - p->pos;
+    if (p->pos + bytes > p->fe->length) {
+        bytes = p->fe->length - p->pos;
     }
 
     /* small files may be stored inline in file entry */
@@ -1668,7 +1668,7 @@ ssize_t udfread_file_read(UDFFILE *p, void *buf, size_t bytes)
 int64_t udfread_file_tell(UDFFILE *p)
 {
     if (p) {
-        return p->pos;
+        return (int64_t)p->pos;
     }
     return -1;
 }
@@ -1681,7 +1681,7 @@ int64_t udfread_file_seek(UDFFILE *p, int64_t pos, int whence)
 
     switch (whence) {
         case UDF_SEEK_CUR:
-            pos += p->pos;
+            pos = udfread_file_tell(p) + pos;
             break;
         case UDF_SEEK_END:
             pos = udfread_file_size(p) + pos;
@@ -1693,9 +1693,9 @@ int64_t udfread_file_seek(UDFFILE *p, int64_t pos, int whence)
     }
 
     if (pos >= 0 && pos <= udfread_file_size(p)) {
-        p->pos = pos;
+        p->pos = (uint64_t)pos;
         p->block_valid = 0;
-        return p->pos;
+        return udfread_file_tell(p);
     }
 
     return -1;

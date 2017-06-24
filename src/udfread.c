@@ -1647,7 +1647,7 @@ int64_t udfread_file_seek(UDFFILE *p, int64_t pos, int whence)
         case UDF_SEEK_SET:
             break;
         default:
-            break;
+            return -1;
     }
 
     if (pos >= 0 && pos <= udfread_file_size(p)) {

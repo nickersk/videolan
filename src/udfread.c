@@ -956,10 +956,21 @@ static int _parse_dir(const uint8_t *data, uint32_t length, struct udf_dir *dir)
         dir->files[dir->num_entries].icb = fid.icb;
         dir->files[dir->num_entries].filename = _cs0_to_utf8(fid.filename, fid.filename_len);
 
-        if (dir->files[dir->num_entries].filename) {
-            dir->num_entries++;
+        if (!dir->files[dir->num_entries].filename) {
+            continue;
         }
 
+        /* Skip empty file identifiers.
+         * Not strictly compilant (?), \0 is allowed in
+         * ECMA167 file identifier.
+         */
+        if (!dir->files[dir->num_entries].filename[0]) {
+            udf_error("skipping empty file identifier\n");
+            free(dir->files[dir->num_entries].filename);
+            continue;
+        }
+
+        dir->num_entries++;
     }
 
     return 0;

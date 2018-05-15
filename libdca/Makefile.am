@@ -11,8 +11,6 @@ libdca_la_LIBADD = $(LIBDCA_LIBS)
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdca.pc libdts.pc
 
-EXTRA_DIST = configure.incl
-
 install-exec-hook:
 	ln -sf "libdca.a" "$(DESTDIR)$(libdir)/libdts.a"
 

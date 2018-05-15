@@ -7,7 +7,7 @@ dcadec_LDADD = ../libdca/libdca.la ../libao/libao.la
 extract_dca_SOURCES = extract_dca.c getopt.c
 
 man1_MANS = dcadec.1 extract_dca.1
-EXTRA_DIST = configure.incl $(man1_MANS)
+EXTRA_DIST = $(man1_MANS)
 
 bin_SCRIPTS = dtsdec extract_dts
 MOSTLYCLEANFILES = $(bin_SCRIPTS)

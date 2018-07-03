@@ -8,4 +8,4 @@ Description: A decoding library for DTS Coherent Acoustics streams.
 Version: @VERSION@
 Libs: -L${libdir} -ldca
 Libs.private: @LIBDCA_LIBS@
-Cflags: -I${includedir}/@PACKAGE@
+Cflags: -I${includedir}

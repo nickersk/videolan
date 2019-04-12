@@ -1311,18 +1311,9 @@ struct udfread_dir {
     uint32_t              current_file;
 };
 
-UDFDIR *udfread_opendir(udfread *udf, const char *path)
+static UDFDIR *_new_udfdir(const struct udf_dir *dir)
 {
-    const struct udf_dir *dir = NULL;
     UDFDIR *result;
-
-    if (!udf || !udf->input || !path) {
-        return NULL;
-    }
-
-    if (_find_file(udf, path, &dir, NULL) < 0) {
-        return NULL;
-    }
 
     if (!dir) {
         return NULL;
@@ -1334,6 +1325,21 @@ UDFDIR *udfread_opendir(udfread *udf, const char *path)
     }
 
     return result;
+}
+
+UDFDIR *udfread_opendir(udfread *udf, const char *path)
+{
+    const struct udf_dir *dir = NULL;
+
+    if (!udf || !udf->input || !path) {
+        return NULL;
+    }
+
+    if (_find_file(udf, path, &dir, NULL) < 0) {
+        return NULL;
+    }
+
+    return _new_udfdir(dir);
 }
 
 struct udfread_dirent *udfread_readdir(UDFDIR *p, struct udfread_dirent *entry)
@@ -1395,19 +1401,10 @@ struct udfread_file {
     void       *block_mem;
 };
 
-UDFFILE *udfread_file_open(udfread *udf, const char *path)
+static UDFFILE *_file_open(udfread *udf, const char *path, const struct udf_file_identifier *fi)
 {
-    const struct udf_file_identifier *fi = NULL;
     struct file_entry *fe;
     UDFFILE *result;
-
-    if (!udf || !udf->input || !path) {
-        return NULL;
-    }
-
-    if (_find_file(udf, path, NULL, &fi) < 0) {
-        return NULL;
-    }
 
     if (fi->characteristic & CHAR_FLAG_DIR) {
         udf_log("error opening file %s (is directory)\n", path);
@@ -1430,6 +1427,21 @@ UDFFILE *udfread_file_open(udfread *udf, const char *path)
     result->fe  = fe;
 
     return result;
+}
+
+UDFFILE *udfread_file_open(udfread *udf, const char *path)
+{
+    const struct udf_file_identifier *fi = NULL;
+
+    if (!udf || !udf->input || !path) {
+        return NULL;
+    }
+
+    if (_find_file(udf, path, NULL, &fi) < 0) {
+        return NULL;
+    }
+
+    return _file_open(udf, path, fi);
 }
 
 int64_t udfread_file_size(UDFFILE *p)

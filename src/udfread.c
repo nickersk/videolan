@@ -1128,7 +1128,7 @@ static int _scan_dir(const struct udf_dir *dir, const char *filename, uint32_t *
 }
 
 static int _find_file(udfread *udf, const char *path,
-                      const struct udf_dir **p_dir,
+                      struct udf_dir **p_dir,
                       const struct udf_file_identifier **p_fid)
 {
     const struct udf_file_identifier *fid = NULL;
@@ -1307,11 +1307,12 @@ size_t udfread_get_volume_set_id (udfread *udf, void *buffer, size_t size)
  */
 
 struct udfread_dir {
-    const struct udf_dir *dir;
+    udfread              *udf;
+    struct udf_dir       *dir;
     uint32_t              current_file;
 };
 
-static UDFDIR *_new_udfdir(const struct udf_dir *dir)
+static UDFDIR *_new_udfdir(udfread *udf, struct udf_dir *dir)
 {
     UDFDIR *result;
 
@@ -1322,6 +1323,7 @@ static UDFDIR *_new_udfdir(const struct udf_dir *dir)
     result = (UDFDIR *)calloc(1, sizeof(UDFDIR));
     if (result) {
         result->dir = dir;
+        result->udf = udf;
     }
 
     return result;
@@ -1329,7 +1331,7 @@ static UDFDIR *_new_udfdir(const struct udf_dir *dir)
 
 UDFDIR *udfread_opendir(udfread *udf, const char *path)
 {
-    const struct udf_dir *dir = NULL;
+    struct udf_dir *dir = NULL;
 
     if (!udf || !udf->input || !path) {
         return NULL;
@@ -1339,7 +1341,26 @@ UDFDIR *udfread_opendir(udfread *udf, const char *path)
         return NULL;
     }
 
-    return _new_udfdir(dir);
+    return _new_udfdir(udf, dir);
+}
+
+UDFDIR *udfread_opendir_at(UDFDIR *p, const char *name)
+{
+    struct udf_dir *dir = NULL;
+    uint32_t index;
+
+    if (!p || !name) {
+        return NULL;
+    }
+
+    if (_scan_dir(p->dir, name, &index) < 0) {
+        udf_log("udfread_opendir_at: entry %s not found\n", name);
+        return NULL;
+    }
+
+    dir = _read_subdir(p->udf, p->dir, index);
+
+    return _new_udfdir(p->udf, dir);
 }
 
 struct udfread_dirent *udfread_readdir(UDFDIR *p, struct udfread_dirent *entry)
@@ -1442,6 +1463,22 @@ UDFFILE *udfread_file_open(udfread *udf, const char *path)
     }
 
     return _file_open(udf, path, fi);
+}
+
+UDFFILE *udfread_file_openat(UDFDIR *dir, const char *name)
+{
+    uint32_t index;
+
+    if (!dir || !name) {
+        return NULL;
+    }
+
+    if (_scan_dir(dir->dir, name, &index) < 0) {
+        udf_log("udfread_file_openat: entry %s not found\n", name);
+        return NULL;
+    }
+
+    return _file_open(dir->udf, name, &dir->dir->files[index]);
 }
 
 int64_t udfread_file_size(UDFFILE *p)

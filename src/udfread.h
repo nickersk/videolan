@@ -125,6 +125,17 @@ typedef struct udfread_dir UDFDIR;
 UDFDIR *udfread_opendir (udfread *, const char *path);
 
 /**
+ *  Open directory stream
+ *
+ *  Directory name may contain special chars (/, \, ...).
+ *
+ * @param dir  parent directory handle (NULL for root directory)
+ * @param name  name of the directory to open from dir
+ * @return directory stream on the directory, or NULL if it could not be opened.
+ */
+UDFDIR *udfread_opendir_at(UDFDIR *dir, const char *name);
+
+/**
  *  Read directory stream
  *
  *  Read a directory entry from directory stream. Return a pointer to
@@ -181,6 +192,17 @@ typedef struct udfread_file UDFFILE;
  * @return file object, or NULL if it could not be opened.
  */
 UDFFILE *udfread_file_open (udfread *, const char *path);
+
+/**
+ *  Open a file from directory
+ *
+ *  File name may contain special chars (/, \, ...).
+ *
+ * @param dir  parent directory handle
+ * @param name  name of the file
+ * @return file object, or NULL if it could not be opened.
+ */
+UDFFILE *udfread_file_openat (UDFDIR *dir, const char *name);
 
 /**
  *  Close file object

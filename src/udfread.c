@@ -1223,9 +1223,11 @@ int udfread_open_input(udfread *udf, udfread_block_input *input/*, int partition
 
     /* Volume Identifier. CS0, UDF 2.1.1 */
     udf->volume_identifier = _cs0_to_utf8(vds.pvd.volume_identifier, vds.pvd.volume_identifier_length);
+    if (udf->volume_identifier) {
+        udf_log("Volume Identifier: %s\n", udf->volume_identifier);
+    }
 
     memcpy(udf->volume_set_identifier, vds.pvd.volume_set_identifier, 128);
-    udf_log("Volume Identifier: %s\n", udf->volume_identifier);
 
     /* map partitions */
     if (_parse_udf_partition_maps(input, &udf->part, &vds) < 0) {

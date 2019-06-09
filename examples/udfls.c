@@ -59,6 +59,10 @@ static int _lsdir(udfread *udf, const char *path)
             sprintf(file, "%s%s",  path, dirent.d_name);
 
             fp = udfread_file_open(udf, file);
+            if (!fp) {
+                fprintf(stderr, "error opening file '%s%s'\n", path, dirent.d_name);
+                continue;
+            }
             printf("%16" PRId64 " %s%s\n",  udfread_file_size(fp), path, dirent.d_name);
             udfread_file_close(fp);
             free(file);

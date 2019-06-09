@@ -92,7 +92,7 @@ enum tag_identifier decode_descriptor_tag(const uint8_t *buf)
   }
 
   if (checksum != buf[4]) {
-      return ECMA_TAG_NONE;
+      return ECMA_TAG_INVALID;
   }
 
   return (enum tag_identifier)id;

@@ -12,7 +12,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libdca.pc libdts.pc
 
 install-exec-hook:
-	ln -sf "libdca.a" "$(DESTDIR)$(libdir)/libdts.a"
+	ln -sf "$(DESTDIR)$(libdir)/libdca.a" "$(DESTDIR)$(libdir)/libdts.a"
 
 uninstall-hook:
 	unlink "$(DESTDIR)$(libdir)/libdts.a"

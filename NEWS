@@ -1,3 +1,8 @@
+libdca-0.0.7 Thu 26 Mar 02:07:02 PM UTC 2020
+
+New release with mostly build system fixes and one potential out of
+bound access fixed.
+
 libdca-0.0.6 Tue May 15 16:40:56 MSK 2018
 
 New release with mostly build system bugfixes.

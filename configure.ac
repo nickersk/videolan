@@ -1,6 +1,6 @@
 dnl library version number
 m4_define([udfread_major], 1)
-m4_define([udfread_minor], 0)
+m4_define([udfread_minor], 1)
 m4_define([udfread_micro], 0)
 m4_define([udfread_version],[udfread_major.udfread_minor.udfread_micro])
 
@@ -12,9 +12,9 @@ dnl - If interfaces have been changed or removed, increase current and set age a
 dnl
 dnl Library file name will be libbluray.so.(current-age).age.revision
 dnl
-m4_define([lt_current],  0)
-m4_define([lt_revision], 1)
-m4_define([lt_age],      0)
+m4_define([lt_current],  1)
+m4_define([lt_revision], 0)
+m4_define([lt_age],      1)
 
 dnl initilization
 AC_INIT([libudfread], udfread_version, [http://www.videolan.org/developers/libudfread.html])

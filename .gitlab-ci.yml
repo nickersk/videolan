@@ -8,7 +8,7 @@ build-debian:
     image: registry.videolan.org/vlc-debian-unstable:20181128113529
     stage: build
     tags:
-        - debian
+        - docker
         - amd64
     script:
         - ./bootstrap
@@ -32,9 +32,8 @@ build-win64:
     image: registry.videolan.org/vlc-debian-win64:20181107154313
     stage: build
     tags:
-        - debian
+        - docker
         - amd64
-        - win64
     script:
         - ./bootstrap
         - mkdir build
@@ -48,7 +47,6 @@ build-win32:
     tags:
         - debian
         - amd64
-        - win32
     script:
         - ./bootstrap
         - mkdir build

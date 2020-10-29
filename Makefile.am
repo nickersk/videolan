@@ -24,7 +24,7 @@ pkginclude_HEADERS = \
 	src/blockinput.h
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = src/udfread.pc
+pkgconfig_DATA = src/libudfread.pc
 
 noinst_PROGRAMS = \
 	udfls \

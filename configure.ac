@@ -102,5 +102,5 @@ UDFREAD_LTVERSION="lt_current():lt_revision():lt_age()"
 AC_SUBST(UDFREAD_LTVERSION)
 
 dnl generate output files
-AC_CONFIG_FILES([Makefile src/udfread.pc src/udfread-version.h])
+AC_CONFIG_FILES([Makefile src/libudfread.pc src/udfread-version.h])
 AC_OUTPUT

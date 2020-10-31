@@ -1,3 +1,6 @@
+2020-06-30:  Version 1.1.1
+- Fix pkg-config file to be named libudfread.pc instead of udfread.pc
+
 2020-06-30:  Version 1.1.0
 - Add functions to open directories/files from already open directory.
 - Fix possible memory corruption with inline files.

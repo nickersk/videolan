@@ -10,7 +10,7 @@ dnl - If there are no interface changes, increase revision.
 dnl - If interfaces have been added, increase current and age. Set revision to 0.
 dnl - If interfaces have been changed or removed, increase current and set age and revision to 0.
 dnl
-dnl Library file name will be libbluray.so.(current-age).age.revision
+dnl Library file name will be libudfread.so.(current-age).age.revision
 dnl
 m4_define([lt_current],  1)
 m4_define([lt_revision], 0)

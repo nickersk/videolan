@@ -33,6 +33,9 @@ BD_PRIVATE void crypto_strerror(int err, char *buf, size_t buf_size);
   } while (0)
 
 BD_PRIVATE int  crypto_init(void) BD_USED;
+
+/* return value: 0 on success, error code on failure */
+
 BD_PRIVATE int  crypto_aes128e(const uint8_t *key, const uint8_t *data, uint8_t *dst) BD_USED;
 BD_PRIVATE int  crypto_aes128d(const uint8_t *key, const uint8_t *data, uint8_t *dst) BD_USED;
 BD_PRIVATE int  crypto_aesg3(const uint8_t *D, uint8_t *lsubk, uint8_t* rsubk,

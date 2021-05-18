@@ -49,6 +49,7 @@ static int _lsdir_at(UDFDIR *dir, const char *path, int depth)
 
             child = udfread_opendir_at(dir, dirent.d_name);
             if (!child) {
+                free(next_dir);
                 fprintf(stderr, "error opening directory %s\n", dirent.d_name);
                 continue;
             }

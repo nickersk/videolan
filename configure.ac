@@ -119,6 +119,14 @@ AC_FUNC_STRERROR_R
 AM_PATH_GPG_ERROR([0.5],
                   AC_DEFINE(HAVE_LIBGPG_ERROR, 1, [Define to 1 if you have the gpg-error library]))
 
+dnl aacs_info can be used with unmounted discs if libudfread is used
+PKG_CHECK_MODULES([LIBUDFREAD], [libudfread >= 1.1.0],
+    [with_libudfread=yes
+     AC_DEFINE([HAVE_LIBUDFREAD], [1], [Define to 1 if libudfread is to be used])],
+    [with_libudfread=no])
+AM_CONDITIONAL([HAVE_LIBUDFREAD], [ test x"$with_libudfread" = x"yes" ])
+
+
 CC_CHECK_CFLAGS_APPEND([-Wall -Wdisabled-optimization -Wpointer-arith ]dnl
 [-Wredundant-decls -Wcast-qual -Wwrite-strings -Wtype-limits -Wundef ]dnl
 [-Wmissing-prototypes -Wshadow])

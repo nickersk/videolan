@@ -17,10 +17,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
+
 #include <libaacs/aacs.h>
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#if defined(HAVE_LIBUDFREAD) && !defined(_WIN32)
+#  include "udf_fs.h"
+#  define USE_UDF 1
+#endif
 
 #include "util/macro.h"  /* MKINT_BE48 */
 
@@ -65,6 +72,9 @@ int main (int argc, char **argv)
 {
     int major, minor, micro, error_code = AACS_SUCCESS;
     AACS *aacs = NULL;
+#ifdef USE_UDF
+    void *udf;
+#endif
 
     if (argc < 2) {
         fprintf(stderr, "Usage: aacs_info <path-to-disc-root> [<path-to-config-file>]\n");
@@ -78,6 +88,12 @@ int main (int argc, char **argv)
     if (!aacs) {
         exit(EXIT_FAILURE);
     }
+
+#ifdef USE_UDF
+    udf = open_udf(argv[1]);
+    if (udf)
+      aacs_set_fopen(aacs, udf, open_udf_file);
+#endif
 
     error_code = aacs_open_device(aacs, argv[1], argc > 2 ? argv[2] : NULL);
 
@@ -125,6 +141,10 @@ int main (int argc, char **argv)
     rl = aacs_get_drl(&num_entries, &mkb_version);
     _dump_rl("Drive", rl, num_entries, mkb_version);
     aacs_free_rl(&rl);
+
+#ifdef USE_UDF
+    close_udf(udf);
+#endif
 
     return EXIT_SUCCESS;
 }

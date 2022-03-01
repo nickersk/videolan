@@ -123,4 +123,12 @@ mkb_dump_CFLAGS = -std=c99
 
 aacs_info_SOURCES = src/examples/aacs_info.c
 aacs_info_CFLAGS = -std=c99
-aacs_info_LDADD = libaacs.la
+aacs_info_LDADD = libaacs.la $(LIBUDFREAD_LIBS)
+if HAVE_WIN32
+else
+if HAVE_LIBUDFREAD
+aacs_info_SOURCES += \
+	src/examples/udf_fs.h \
+	src/examples/udf_fs.c
+endif
+endif

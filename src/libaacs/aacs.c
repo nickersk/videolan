@@ -1217,6 +1217,7 @@ static int _decrypt_unit(AACS *aacs, uint8_t *out_buf, const uint8_t *in_buf, ui
     crypto_err = crypto_aes128e(aacs->uk->uk[curr_uk].key, out_buf, key);
     if (crypto_err) {
         LOG_CRYPTO_ERROR(DBG_AACS, "unit key derivation failed", crypto_err);
+        return 1;
     }
 
     for (a = 0; a < 16; a++) {

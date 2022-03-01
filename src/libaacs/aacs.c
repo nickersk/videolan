@@ -659,6 +659,12 @@ static int _calc_mk(AACS *aacs, uint8_t *mk, pk_list *pkl, dk_list *dkl)
         _update_rl(mkb);
     }
 
+    if (aacs->cc && aacs->cc->aacs2) {
+        /* note: this does not detect HDMV only discs */
+        BD_DEBUG(DBG_AACS | DBG_CRIT, "Error calculating media key: disc is using AACS2\n");
+        return AACS_ERROR_UNSUPPORTED_DISC;
+    }
+
     /* try device keys first */
     if (dkl) {
         result = _calc_mk_dks(mkb, dkl, mk);
@@ -1264,6 +1270,7 @@ const char *aacs_error_str(int err)
        [-AACS_ERROR_MMC_FAILURE]      = "MMC failure",
        [-AACS_ERROR_NO_DK]            = "No matching device key",
        [-AACS_ERROR_UNKNOWN]          = "Error",
+       [-AACS_ERROR_UNSUPPORTED_DISC] = "Unsupported AACS version",
     };
     err = -err;
     if (err < 0 || (size_t)err >= sizeof(str) / sizeof(str[0]) || !str[err]) {

@@ -661,6 +661,7 @@ static int _calc_mk(AACS *aacs, uint8_t *mk, pk_list *pkl, dk_list *dkl)
 
     if (aacs->cc && aacs->cc->aacs2) {
         /* note: this does not detect HDMV only discs */
+        mkb_close(mkb);
         BD_DEBUG(DBG_AACS | DBG_CRIT, "Error calculating media key: disc is using AACS2\n");
         return AACS_ERROR_UNSUPPORTED_DISC;
     }

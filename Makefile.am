@@ -93,7 +93,7 @@ dist-hook:
 # programs
 #
 
-noinst_PROGRAMS = parser_test uk_dump mkb_dump
+noinst_PROGRAMS = parser_test uk_dump mkb_dump cci_dump
 bin_PROGRAMS = aacs_info
 
 parser_test_SOURCES = \
@@ -120,6 +120,15 @@ mkb_dump_SOURCES = \
 	src/util/strutl.c \
 	src/util/logging.c
 mkb_dump_CFLAGS = -std=c99
+
+cci_dump_SOURCES = \
+	src/devtools/cci_dump.c \
+	src/devtools/read_file.h \
+	src/libaacs/cci.h \
+	src/libaacs/cci_data.h \
+	src/libaacs/cci.c \
+	src/util/logging.c
+cci_dump_CFLAGS = -std=c99
 
 aacs_info_SOURCES = src/examples/aacs_info.c
 aacs_info_CFLAGS = -std=c99

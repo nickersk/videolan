@@ -171,12 +171,12 @@ void cci_free(AACS_CCI **pp)
     }
 }
 
-int cci_is_unencrypted(AACS_CCI *cci)
+int cci_is_unencrypted(const AACS_CCI *cci)
 {
     unsigned int ii;
 
     for (ii = 0; ii < cci->num_entry; ii++) {
-        AACS_CCI_ENTRY *e = &cci->entry[ii];
+        const AACS_CCI_ENTRY *e = &cci->entry[ii];
 
         if (e->type == cci_AACS_ENHANCED_TITLE_USAGE) {
             BD_DEBUG(DBG_CCI, "Enhanced title usage CCI found\n");
@@ -212,7 +212,7 @@ int cci_is_unencrypted(AACS_CCI *cci)
     return 0;
 }
 
-AACS_BASIC_CCI *cci_get_basic_cci(AACS_CCI *cci)
+const AACS_BASIC_CCI *cci_get_basic_cci(const AACS_CCI *cci)
 {
     unsigned int ii;
 

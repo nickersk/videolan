@@ -1,25 +1,4 @@
-%code requires {
-#include "file/keydbcfg.h"
-
-#define MAX_KEY_SIZE 128
-
-typedef struct {
-  title_entry_list    *celist;  /* current disc entry or NULL */
-  digit_key_pair_list *dkplist; /* current list */
-
-  const uint64_t  *want_disc_id; /* parse only this disc (none if NULL) */
-  int              all_discs;    /* parse entries for all discs */
-
-  size_t hexkey_size;
-  union { /* make sure we're properly aligned */
-    char     b[MAX_KEY_SIZE];
-    uint64_t u64[5];
-  } hexkey;
-} parser_state;
-
-}
-
-%code {
+%{
 /*
  * This file is part of libaacs
  * Copyright (C) 2010  gates
@@ -39,6 +18,7 @@ typedef struct {
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "file/keydbcfg.h"
 #include "util/macro.h"
 #include "util/strutl.h"
 
@@ -86,6 +66,22 @@ enum
   ENTRY_TYPE_UK
 };
 
+#define MAX_KEY_SIZE 128
+
+typedef struct parser_state {
+  title_entry_list    *celist;  /* current disc entry or NULL */
+  digit_key_pair_list *dkplist; /* current list */
+
+  const uint64_t  *want_disc_id; /* parse only this disc (none if NULL) */
+  int              all_discs;    /* parse entries for all discs */
+
+  size_t hexkey_size;
+  union { /* make sure we're properly aligned */
+    char     b[MAX_KEY_SIZE];
+    uint64_t u64[5];
+  } hexkey;
+} parser_state;
+
 static dk_list *new_dk_list(void);
 static pk_list *new_pk_list(void);
 static cert_list *new_cert_list(void);
@@ -120,19 +116,18 @@ static inline int _discid_cmp(const uint64_t *want_disc_id, const uint64_t *disc
 
 /* uncomment the line below for debugging */
 // int yydebug = 1;
-}
+%}
 /* Options set to generate a reentrant parser that is POSIX yacc compatible
  * The basic 'scanner' parameters are set. Also, another parameter is set
  * to pass in a title entry list struct used to hold all title entries.
  * Most of these options are bison specific, but some BSD's have bison
  * compatibility support for these options in byacc.
  */
-%pure-parser
-%yacc
+%define api.pure
 %lex-param{void *scanner}
 %parse-param{void *scanner}
-%parse-param{config_file *cf}
-%parse-param{parser_state *ps}
+%parse-param{struct config_file_t *cf}
+%parse-param{struct parser_state *ps}
 
 %union
 {

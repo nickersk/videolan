@@ -18,6 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+struct config_file_t *cf;
+struct parser_state *ps;
+
 #include "keydbcfg-parser.h"
 
 #define YY_NO_UNISTD_H

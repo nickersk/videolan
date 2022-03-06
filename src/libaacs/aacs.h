@@ -167,6 +167,7 @@ AACS_PUBLIC const uint8_t *aacs_get_pmsn(AACS *aacs); /* may fail even if disc c
 AACS_PUBLIC const uint8_t *aacs_get_mk(AACS *aacs);   /* may fail even if disc can be decrypted */
 AACS_PUBLIC const uint8_t *aacs_get_content_cert_id(AACS *aacs);
 AACS_PUBLIC const uint8_t *aacs_get_bdj_root_cert_hash(AACS *aacs);
+AACS_PUBLIC const uint8_t *aacs2_get_bdj_root_cert_hash(AACS *aacs);
 
 /*
  * AACS Online

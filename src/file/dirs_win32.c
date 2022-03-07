@@ -24,6 +24,7 @@
 #include "dirs.h"
 
 #include "util/logging.h"
+#include "util/macro.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -66,10 +67,10 @@ char *file_get_data_home(void)
     /* Get the "Application Data" folder for the user */
     if (S_OK == SHGetFolderPathW(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE,
                                  NULL, SHGFP_TYPE_CURRENT, wdir)) {
-      appdir = _wide_to_utf8(wdir);
-      if (appdir) {
-          return appdir;
-      }
+        char *appdir = _wide_to_utf8(wdir);
+        if (appdir) {
+            return appdir;
+        }
     }
 
     BD_DEBUG(DBG_FILE, "Can't find user configuration directory !\n");

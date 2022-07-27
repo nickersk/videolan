@@ -20,7 +20,7 @@ build-debian:
 build-macos:
     stage: build
     tags:
-        - catalina
+        - mojave
         - amd64
     script:
         - autoreconf -fisv

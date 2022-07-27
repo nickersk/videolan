@@ -128,10 +128,10 @@ typedef struct {
  *   path/VTS_01_1.VOB
  *   path/vts_01_1.vob
  *
- * @param path Specifies the the device, file or directory to be used.
+ * @param path Specifies the device, file or directory to be used.
  * @param stream is a private handle used by stream_cb
  * @param stream_cb is a struct containing seek and read functions
- * @return If successful a a read handle is returned. Otherwise 0 is returned.
+ * @return If successful a read handle is returned. Otherwise 0 is returned.
  *
  * dvd = DVDOpen(path);
  * dvd = DVDOpenStream(stream, &stream_cb);
@@ -142,11 +142,11 @@ dvd_reader_t *DVDOpenStream( void *, dvd_reader_stream_cb * );
 /**
  * Same as DVDOpen, but with private handle to be passed back on callbacks
  *
- * @param path Specifies the the device, file or directory to be used.
+ * @param path Specifies the device, file or directory to be used.
  * @param priv is a private handle
  * @param logcb is a custom logger callback struct, or NULL if none needed
  * @param stream_cb is a struct containing seek and read functions
- * @return If successful a a read handle is returned. Otherwise 0 is returned.
+ * @return If successful a read handle is returned. Otherwise 0 is returned.
  *
  * dvd = DVDOpen2(priv, logcb, path);
  * dvd = DVDOpenStream2(priv, logcb, &stream_cb);

@@ -77,14 +77,14 @@ typedef struct {
   uint32_t hli_s_ptm;              /**< start ptm of hli */
   uint32_t hli_e_ptm;              /**< end ptm of hli */
   uint32_t btn_se_e_ptm;           /**< end ptm of button select */
-  unsigned int zero1 : 2;          /**< reserved */
-  unsigned int btngr_ns : 2;       /**< number of button groups 1, 2 or 3 with 36/18/12 buttons */
-  unsigned int zero2 : 1;          /**< reserved */
-  unsigned int btngr1_dsp_ty : 3;  /**< display type of subpic stream for button group 1 */
-  unsigned int zero3 : 1;          /**< reserved */
-  unsigned int btngr2_dsp_ty : 3;  /**< display type of subpic stream for button group 2 */
-  unsigned int zero4 : 1;          /**< reserved */
-  unsigned int btngr3_dsp_ty : 3;  /**< display type of subpic stream for button group 3 */
+  unsigned char zero1 : 2;          /**< reserved */
+  unsigned char btngr_ns : 2;       /**< number of button groups 1, 2 or 3 with 36/18/12 buttons */
+  unsigned char zero2 : 1;          /**< reserved */
+  unsigned char btngr1_dsp_ty : 3;  /**< display type of subpic stream for button group 1 */
+  unsigned char zero3 : 1;          /**< reserved */
+  unsigned char btngr2_dsp_ty : 3;  /**< display type of subpic stream for button group 2 */
+  unsigned char zero4 : 1;          /**< reserved */
+  unsigned char btngr3_dsp_ty : 3;  /**< display type of subpic stream for button group 3 */
   uint8_t btn_ofn;     /**< button offset number range 0-255 */
   uint8_t btn_ns;      /**< number of valid buttons  <= 36/18/12 (low 6 bits) */
   uint8_t nsl_btn_ns;  /**< number of buttons selectable by U_BTNNi (low 6 bits)   nsl_btn_ns <= btn_ns */

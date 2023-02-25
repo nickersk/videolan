@@ -32,6 +32,7 @@
 #import "library/VLCInputItem.h"
 
 #import "windows/video/VLCVoutView.h"
+#import "windows/video/VLCMainVideoViewController.h"
 #import "windows/video/VLCVideoWindowCommon.h"
 
 NSString *VLCPlayerElementaryStreamID = @"VLCPlayerElementaryStreamID";
@@ -1622,7 +1623,8 @@ static int BossCallback(vlc_object_t *p_this,
 
     id currentWindow = [NSApp keyWindow];
     if ([currentWindow respondsToSelector:@selector(videoView)]) {
-        VLCVoutView *videoView = [(VLCVideoWindowCommon *)currentWindow videoView];
+        VLCVideoWindowCommon *videoWindow = (VLCVideoWindowCommon *)currentWindow;
+        VLCVoutView *videoView = videoWindow.videoViewController.voutView;
         if (videoView) {
             p_vout = [videoView voutThread];
         }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * VLCLibraryWindowAutohideToolbar.h: MacOS X interface module
+ * VLCMainVideoViewController.h: MacOS X interface module
  *****************************************************************************
  * Copyright (C) 2023 VLC authors and VideoLAN
  *
@@ -22,13 +22,28 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import <windows/mainwindow/VLCControlsBarCommon.h>
+#import <windows/video/VLCVoutView.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface VLCLibraryWindowAutohideToolbar : NSToolbar
+@interface VLCMainVideoViewController : NSViewController
 
-@property (readwrite, nonatomic) BOOL autohide;
+@property (readwrite, strong) IBOutlet VLCVoutView *voutView;
+@property (readwrite, strong) IBOutlet NSBox *mainControlsView;
+@property (readwrite, strong) IBOutlet VLCControlsBarCommon *controlsBar;
+@property (readwrite, strong) IBOutlet NSButton *returnButton;
+@property (readwrite, strong) IBOutlet NSButton *playlistButton;
+@property (readwrite, strong) IBOutlet NSLayoutConstraint *returnButtonTopConstraint;
+@property (readwrite, strong) IBOutlet NSLayoutConstraint *playlistButtonTopConstraint;
 
-- (void)displayToolbar;
+@property (readwrite, nonatomic) BOOL autohideControls;
+@property (readwrite, nonatomic) BOOL displayLibraryControls;
+
+- (void)showControls;
+
+- (IBAction)togglePlaylist:(id)sender;
+- (IBAction)returnToLibrary:(id)sender;
 
 @end
 

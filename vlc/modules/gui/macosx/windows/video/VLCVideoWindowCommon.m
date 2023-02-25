@@ -25,17 +25,19 @@
 
 #import "extensions/NSScreen+VLCAdditions.h"
 #import "extensions/NSString+Helpers.h"
-#import "main/CompatibilityFixes.h"
-#import "main/VLCMain.h"
-#import "windows/mainwindow/VLCControlsBarCommon.h"
-#import "windows/video/VLCFSPanelController.h"
-#import "windows/video/VLCVideoOutputProvider.h"
-#import "windows/video/VLCVoutView.h"
-#import "playlist/VLCPlaylistController.h"
-#import "playlist/VLCPlayerController.h"
+
 #import "library/VLCLibraryWindow.h"
 #import "library/VLCInputItem.h"
-#import "views/VLCBottomBarView.h"
+
+#import "main/CompatibilityFixes.h"
+#import "main/VLCMain.h"
+
+#import "playlist/VLCPlaylistController.h"
+#import "playlist/VLCPlayerController.h"
+
+#import "windows/video/VLCMainVideoViewController.h"
+#import "windows/video/VLCVideoOutputProvider.h"
+#import "windows/video/VLCVoutView.h"
 
 const CGFloat VLCVideoWindowCommonMinimalHeight = 70.;
 NSString *VLCVideoWindowShouldShowFullscreenController = @"VLCVideoWindowShouldShowFullscreenController";
@@ -62,6 +64,8 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
     BOOL b_video_view_was_hidden;
 
     NSRect _frameBeforeLionFullscreen;
+
+    BOOL _preFullScreenVideoViewLibraryControlsDisplayed;
 }
 
 - (void)customZoom:(id)sender;
@@ -81,14 +85,7 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
                               backing:backingType defer:flag];
 
     if (self) {
-        /* we want to be moveable regardless of our style */
-        [self setMovableByWindowBackground: YES];
-        [self setCanBecomeKeyWindow:YES];
-
-        o_temp_view = [[NSView alloc] init];
-        [o_temp_view setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
-
-        _playerController = [[[VLCMain sharedInstance] playlistController] playerController];
+        [self setup];
     }
 
     return self;
@@ -101,6 +98,16 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
 
 - (void)awakeFromNib
 {
+    [super awakeFromNib];
+    [self setup];
+}
+
+- (void)setup
+{
+    if (_videoViewController == nil) {
+        _videoViewController = [[VLCMainVideoViewController alloc] init];
+    }
+
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter addObserver:self
                            selector:@selector(mediaMetadataChanged:)
@@ -110,6 +117,17 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
                            selector:@selector(mediaMetadataChanged:)
                                name:VLCPlayerCurrentMediaItemChanged
                              object:nil];
+
+    /* we want to be moveable regardless of our style */
+    [self setMovableByWindowBackground:YES];
+    [self setCanBecomeKeyWindow:YES];
+
+    o_temp_view = [[NSView alloc] init];
+    [o_temp_view setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
+
+    _playerController = [[[VLCMain sharedInstance] playlistController] playerController];
+    _videoViewController = [[VLCMainVideoViewController alloc] init];
+
     [self mediaMetadataChanged:nil];
 
     BOOL b_nativeFullscreenMode = var_InheritBool(getIntf(), "macosx-nativefullscreenmode");
@@ -120,8 +138,6 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
         // Native fullscreen seems to be default on El Capitan, this disables it explicitly
         [self setCollectionBehavior: NSWindowCollectionBehaviorFullScreenAuxiliary];
     }
-
-    [super awakeFromNib];
 }
 
 - (void)mediaMetadataChanged:(NSNotification *)aNotification
@@ -327,37 +343,6 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
 #pragma mark -
 #pragma mark Lion native fullscreen handling
 
-- (void)hideControlsBar
-{
-    [[self.controlsBar bottomBarView] setHidden: YES];
-    self.videoViewBottomConstraint.priority = 1;
-}
-
-- (void)showControlsBar
-{
-    [[self.controlsBar bottomBarView] setHidden: NO];
-    self.videoViewBottomConstraint.priority = 999;
-}
-
-- (void)becomeKeyWindow
-{
-    [super becomeKeyWindow];
-
-    // change fspanel state for the case when multiple windows are in fullscreen
-    if ([self hasActiveVideo] && [self fullscreen]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:VLCFSPanelShouldBecomeActive object:self];
-    } else {
-        [[NSNotificationCenter defaultCenter] postNotificationName:VLCFSPanelShouldBecomeInactive object:self];
-    }
-}
-
-- (void)resignKeyWindow
-{
-    [super resignKeyWindow];
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:VLCFSPanelShouldBecomeInactive object:self];
-}
-
 -(NSArray*)customWindowsToEnterFullScreenForWindow:(NSWindow *)window
 {
     if (window == self) {
@@ -424,10 +409,6 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
         }
     }
 
-    if (![_videoView isHidden]) {
-        [self hideControlsBar];
-    }
-
     [self setMovableByWindowBackground: NO];
 }
 
@@ -442,13 +423,12 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
 
     if ([self hasActiveVideo]) {
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-        [notificationCenter postNotificationName:VLCVideoWindowDidEnterFullscreen object:self];
-        if (![_videoView isHidden]) {
-            [notificationCenter postNotificationName:VLCFSPanelShouldBecomeActive object:self];
+        if (![_videoViewController.view isHidden]) {
+            [notificationCenter postNotificationName:VLCVideoWindowShouldShowFullscreenController object:self];
         }
     }
 
-    for (__kindof NSView *view in [[self videoView] subviews]) {
+    for (__kindof NSView *view in [_videoViewController.view subviews]) {
         if ([view respondsToSelector:@selector(reshape)])
             [view reshape];
     }
@@ -470,11 +450,6 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
     }
 
     [NSCursor setHiddenUntilMouseMoves: NO];
-    [[NSNotificationCenter defaultCenter] postNotificationName:VLCFSPanelShouldBecomeInactive object:self];
-
-    if (![_videoView isHidden]) {
-        [self showControlsBar];
-    }
 
     [self setMovableByWindowBackground: YES];
 }
@@ -525,7 +500,7 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
     if (!o_fullscreen_window) {
         /* We can't change the styleMask of an already created NSWindow, so we create another window, and do eye catching stuff */
 
-        rect = [[_videoView superview] convertRect: [_videoView frame] toView: nil]; /* Convert to Window base coord */
+        rect = [[_videoViewController.view superview] convertRect: [_videoViewController.view frame] toView: nil]; /* Convert to Window base coord */
         rect.origin.x += [self frame].origin.x;
         rect.origin.y += [self frame].origin.y;
         o_fullscreen_window = [[VLCWindow alloc] initWithContentRect:rect styleMask: NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
@@ -534,11 +509,14 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
         [o_fullscreen_window setCanBecomeMainWindow: YES];
         [o_fullscreen_window setHasActiveVideo: YES];
         [o_fullscreen_window setFullscreen: YES];
+        [o_fullscreen_window setAcceptsMouseMovedEvents:YES];
 
         /* Make sure video view gets visible in case the playlist was visible before */
-        b_video_view_was_hidden = [_videoView isHidden];
-        [_videoView setHidden: NO];
-        _videoView.translatesAutoresizingMaskIntoConstraints = YES;
+        b_video_view_was_hidden = [_videoViewController.view isHidden];
+        [_videoViewController.view setHidden: NO];
+        _videoViewController.view.translatesAutoresizingMaskIntoConstraints = YES;
+        _preFullScreenVideoViewLibraryControlsDisplayed = _videoViewController.displayLibraryControls;
+        _videoViewController.displayLibraryControls = NO;
 
         if (!b_animation) {
             /* We don't animate if we are not visible, instead we
@@ -551,11 +529,11 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
             }
 
             [NSAnimationContext beginGrouping];
-            [[_videoView superview] replaceSubview:_videoView with:o_temp_view];
-            [o_temp_view setFrame:[_videoView frame]];
-            [[o_fullscreen_window contentView] addSubview:_videoView];
-            [_videoView setFrame: [[o_fullscreen_window contentView] frame]];
-            [_videoView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+            [[_videoViewController.view superview] replaceSubview:_videoViewController.view with:o_temp_view];
+            [o_temp_view setFrame:[_videoViewController.view frame]];
+            [[o_fullscreen_window contentView] addSubview:_videoViewController.view];
+            [_videoViewController.view setFrame: [[o_fullscreen_window contentView] frame]];
+            [_videoViewController.view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
             [NSAnimationContext endGrouping];
 
             [screen setFullscreenPresentationOptions];
@@ -579,11 +557,11 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
 
         /* Make sure we don't see the _videoView disappearing of the screen during this operation */
         [NSAnimationContext beginGrouping];
-        [[_videoView superview] replaceSubview:_videoView with:o_temp_view];
-        [o_temp_view setFrame:[_videoView frame]];
-        [[o_fullscreen_window contentView] addSubview:_videoView];
-        [_videoView setFrame: [[o_fullscreen_window contentView] frame]];
-        [_videoView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        [[_videoViewController.view superview] replaceSubview:_videoViewController.view with:o_temp_view];
+        [o_temp_view setFrame:[_videoViewController.view frame]];
+        [[o_fullscreen_window contentView] addSubview:_videoViewController.view];
+        [_videoViewController.view setFrame: [[o_fullscreen_window contentView] frame]];
+        [_videoViewController.view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
         [o_fullscreen_window makeKeyAndOrderFront:self];
         [NSAnimationContext endGrouping];
@@ -641,16 +619,15 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
 
 - (void)hasBecomeFullscreen
 {
-    if ([[_videoView subviews] count] > 0)
-        [o_fullscreen_window makeFirstResponder: [[_videoView subviews] firstObject]];
+    if ([[_videoViewController.view subviews] count] > 0)
+        [o_fullscreen_window makeFirstResponder: [[_videoViewController.view subviews] firstObject]];
 
     [o_fullscreen_window makeKeyWindow];
     [o_fullscreen_window setAcceptsMouseMovedEvents: YES];
 
-    /* tell the fspanel to move itself to front next time it's triggered */
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter postNotificationName:VLCVideoWindowDidEnterFullscreen object:self];
-    [notificationCenter postNotificationName:VLCFSPanelShouldBecomeActive object:self];
+    [notificationCenter postNotificationName:VLCVideoWindowShouldShowFullscreenController object:self];
 
     if ([self isVisible])
         [self orderOut: self];
@@ -668,14 +645,13 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
     /* We always try to do so */
     [NSScreen unblackoutScreens];
 
-    [[_videoView window] makeKeyAndOrderFront: nil];
+    [[_videoViewController.view window] makeKeyAndOrderFront: nil];
 
     /* Don't do anything if o_fullscreen_window is already closed */
     if (!o_fullscreen_window) {
         return;
     }
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:VLCFSPanelShouldBecomeInactive object:self];
     [[o_fullscreen_window screen] setNonFullscreenPresentationOptions];
 
     if (o_fullscreen_anim1) {
@@ -716,7 +692,7 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
 
     [self setAlphaValue: 0.0];
     [self orderFront: self];
-    [[_videoView window] orderFront: self];
+    [[_videoViewController.view window] orderFront: self];
 
     frame = [[o_temp_view superview] convertRect: [o_temp_view frame] toView: nil]; /* Convert to Window base coord */
     frame.origin.x += [self frame].origin.x;
@@ -761,15 +737,16 @@ NSString *VLCWindowShouldShowController = @"VLCWindowShouldShowController";
     /* This function is private and should be only triggered at the end of the fullscreen change animation */
     /* Make sure we don't see the _videoView disappearing of the screen during this operation */
     [NSAnimationContext beginGrouping];
-    [_videoView removeFromSuperviewWithoutNeedingDisplay];
-    [[o_temp_view superview] replaceSubview:o_temp_view with:_videoView];
+    [_videoViewController.view removeFromSuperviewWithoutNeedingDisplay];
+    [[o_temp_view superview] replaceSubview:o_temp_view with:_videoViewController.view];
     // TODO Replace tmpView by an existing view (e.g. middle view)
     // TODO Use constraints for fullscreen window, reinstate constraints once the video view is added to the main window again
-    [_videoView setFrame:[o_temp_view frame]];
-    if ([[_videoView subviews] count] > 0)
-        [self makeFirstResponder: [[_videoView subviews] firstObject]];
+    [_videoViewController.view setFrame:[o_temp_view frame]];
+    if ([[_videoViewController.view subviews] count] > 0)
+        [self makeFirstResponder: [[_videoViewController.view subviews] firstObject]];
 
-    [_videoView setHidden: b_video_view_was_hidden];
+    [_videoViewController.view setHidden: b_video_view_was_hidden];
+    _videoViewController.displayLibraryControls = _preFullScreenVideoViewLibraryControlsDisplayed;
 
     [self makeKeyAndOrderFront:self];
 

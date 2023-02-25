@@ -1,10 +1,9 @@
 /*****************************************************************************
- * VLCDetachedVideoWindow.m: MacOS X interface module
+ * VLCFullVideoViewWindow: MacOS X interface module
  *****************************************************************************
- * Copyright (C) 2002-2019 VLC authors and VideoLAN
+ * Copyright (C) 2023 VLC authors and VideoLAN
  *
- * Authors: Felix Paul Kühne <fkuehne -at- videolan -dot- org>
- *          David Fuhrmann <david dot fuhrmann at googlemail dot com>
+ * Authors: Claudio Cambra <developer@claudiocambra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +20,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
-#import "VLCAspectRatioRetainingVideoWindow.h"
+#import "VLCVideoWindowCommon.h"
 
-@interface VLCDetachedVideoWindow : VLCAspectRatioRetainingVideoWindow
+NS_ASSUME_NONNULL_BEGIN
+
+@interface VLCFullVideoViewWindow : VLCVideoWindowCommon
+
+- (void)stopTitlebarAutohideTimer;
+- (void)startTitlebarAutohideTimer;
+- (void)showTitleBar;
+
+- (void)hideTitleBar:(id)sender;
+- (void)enableVideoTitleBarMode;
+- (void)disableVideoTitleBarMode;
 
 @end
+
+NS_ASSUME_NONNULL_END

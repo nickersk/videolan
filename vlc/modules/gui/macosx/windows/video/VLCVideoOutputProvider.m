@@ -41,7 +41,7 @@
 #import "playlist/VLCPlayerController.h"
 
 #import "windows/video/VLCAspectRatioRetainingVideoWindow.h"
-#import "windows/video/VLCDetachedVideoWindow.h"
+#import "windows/video/VLCMainVideoViewController.h"
 #import "windows/video/VLCVoutView.h"
 
 #include <vlc_vout_display.h>
@@ -244,11 +244,12 @@ int WindowOpen(vlc_window_t *p_wnd)
     newVideoWindow.acceptsMouseMovedEvents = !asVideoWallpaper;
     newVideoWindow.movableByWindowBackground = !asVideoWallpaper;
 
-    VLCVoutView *voutView = [[VLCVoutView alloc] initWithFrame:newVideoWindow.contentView.bounds];
-    voutView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    newVideoWindow.videoViewController = [[VLCMainVideoViewController alloc] init];
+    newVideoWindow.videoViewController.displayLibraryControls = NO;
+    newVideoWindow.videoViewController.view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    newVideoWindow.videoViewController.view.frame = newVideoWindow.contentView.frame;
 
-    [newVideoWindow.contentView addSubview:voutView positioned:NSWindowAbove relativeTo:nil];
-    newVideoWindow.videoView = voutView;
+    [newVideoWindow.contentView addSubview:newVideoWindow.videoViewController.view positioned:NSWindowAbove relativeTo:nil];
 
     if (asVideoWallpaper) {
         [newVideoWindow setLevel:CGWindowLevelForKey(kCGDesktopWindowLevelKey) + 1];
@@ -279,17 +280,42 @@ int WindowOpen(vlc_window_t *p_wnd)
 {
     BOOL multipleVoutWindows = _voutWindows.count > 0;
     // setup detached window with controls
-    NSWindowController *o_controller = [[NSWindowController alloc] initWithWindowNibName:@"DetachedVideoWindow"];
-    [o_controller loadWindow];
-    VLCVideoWindowCommon *newVideoWindow = (VLCDetachedVideoWindow *)o_controller.window;
+    NSWindowStyleMask mask = NSWindowStyleMaskClosable |
+        NSWindowStyleMaskMiniaturizable |
+        NSWindowStyleMaskResizable |
+        NSWindowStyleMaskTitled |
+        NSWindowStyleMaskFullSizeContentView;
+
+    VLCAspectRatioRetainingVideoWindow *newVideoWindow = [[VLCAspectRatioRetainingVideoWindow alloc] initWithContentRect:NSMakeRect(0,0,300,300)
+                                                                                                               styleMask:mask
+                                                                                                                 backing:NSBackingStoreBuffered
+                                                                                                                   defer:YES];
+
+    newVideoWindow.backgroundColor = [NSColor blackColor];
+    newVideoWindow.canBecomeKeyWindow = YES;
+    newVideoWindow.canBecomeMainWindow = YES;
+    newVideoWindow.acceptsMouseMovedEvents = YES;
+    newVideoWindow.movableByWindowBackground = YES;
+    newVideoWindow.minSize = NSMakeSize(VLCVideoWindowCommonMinimalHeight, VLCVideoWindowCommonMinimalHeight);
+    newVideoWindow.titlebarAppearsTransparent = YES;
+
+    newVideoWindow.videoViewController = [[VLCMainVideoViewController alloc] init];
+    newVideoWindow.videoViewController.displayLibraryControls = NO;
+    newVideoWindow.videoViewController.view.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    newVideoWindow.videoViewController.view.frame = newVideoWindow.contentView.frame;
+    [newVideoWindow enableVideoTitleBarMode];
+
+    [newVideoWindow.contentView addSubview:newVideoWindow.videoViewController.view positioned:NSWindowAbove relativeTo:nil];
 
     // no frame autosave for additional vout windows
     if (multipleVoutWindows) {
         newVideoWindow.frameAutosaveName = @"";
     }
 
+    newVideoWindow.releasedWhenClosed = NO;
     newVideoWindow.delegate = newVideoWindow;
     newVideoWindow.level = NSNormalWindowLevel;
+    [newVideoWindow center];
     return newVideoWindow;
 }
 
@@ -346,12 +372,12 @@ int WindowOpen(vlc_window_t *p_wnd)
     
     // set (only!) window origin if specified
     if (!isEmbedded) {
-        [self setupWindowOriginForVideoWindow:videoWindow
-                                   atPosition:videoViewPosition];
-
         if ([videoWindow isKindOfClass:[VLCAspectRatioRetainingVideoWindow class]]) {
             [(VLCAspectRatioRetainingVideoWindow*)videoWindow setNativeVideoSize:videoViewSize];
         }
+
+        [self setupWindowOriginForVideoWindow:videoWindow
+                                   atPosition:videoViewPosition];
     }
 
     // cascade windows if we have more than one vout
@@ -365,7 +391,7 @@ int WindowOpen(vlc_window_t *p_wnd)
 - (void)setupVideoOutputForVideoWindow:(VLCVideoWindowCommon *)videoWindow
                          withVlcWindow:(vlc_window_t *)p_wnd
 {
-    VLCVoutView *voutView = videoWindow.videoView;
+    VLCVoutView *voutView = videoWindow.videoViewController.voutView;
     
     [videoWindow setAlphaValue:config_GetFloat("macosx-opaqueness")];
     [_voutWindows setObject:videoWindow forKey:[NSValue valueWithPointer:p_wnd]];
@@ -401,7 +427,7 @@ int WindowOpen(vlc_window_t *p_wnd)
 {
     _playerController = [VLCMain sharedInstance].playlistController.playerController;
     VLCVideoWindowCommon *newVideoWindow = [self setupVideoWindow];
-    VLCVoutView *voutView = newVideoWindow.videoView;
+    VLCVoutView *voutView = newVideoWindow.videoViewController.voutView;
 
     BOOL multipleVoutWindows = _voutWindows.count > 0;
     BOOL videoWallpaper = var_InheritBool(getIntf(), "video-wallpaper") && !multipleVoutWindows;
@@ -429,7 +455,7 @@ int WindowOpen(vlc_window_t *p_wnd)
         return;
     }
 
-    [[videoWindow videoView] releaseVoutThread];
+    [videoWindow.videoViewController.voutView releaseVoutThread];
 
     // set active video to no BEFORE closing the window and exiting fullscreen
     // (avoid stopping playback due to NSWindowWillCloseNotification, preserving fullscreen state)

@@ -24,7 +24,6 @@
 #import "VLCControlsBarCommon.h"
 
 #import "extensions/NSString+Helpers.h"
-#import "extensions/NSColor+VLCAdditions.h"
 #import "main/VLCMain.h"
 #import "playlist/VLCPlaylistController.h"
 #import "playlist/VLCPlayerController.h"
@@ -35,6 +34,7 @@
 #import "views/VLCImageView.h"
 #import "views/VLCTimeField.h"
 #import "views/VLCSlider.h"
+#import "views/VLCVolumeSlider.h"
 #import "views/VLCWrappableTextField.h"
 
 /*****************************************************************************
@@ -50,11 +50,6 @@
     NSImage *_pressedPauseImage;
     NSImage *_playImage;
     NSImage *_pressedPlayImage;
-    NSImage *_repeatOffImage;
-    NSImage *_repeatAllImage;
-    NSImage *_repeatOneImage;
-    NSImage *_shuffleOffImage;
-    NSImage *_shuffleOnImage;
 
     NSTimeInterval last_fwd_event;
     NSTimeInterval last_bwd_event;
@@ -81,6 +76,18 @@
                                name:VLCPlayerTimeAndPositionChanged
                              object:nil];
     [notificationCenter addObserver:self
+                           selector:@selector(updateVolumeSlider:)
+                               name:VLCPlayerVolumeChanged
+                             object:nil];
+    [notificationCenter addObserver:self
+                           selector:@selector(updateVolumeSlider:)
+                               name:VLCPlayerMuteChanged
+                             object:nil];
+    [notificationCenter addObserver:self
+                           selector:@selector(updateMuteVolumeButton:)
+                               name:VLCPlayerMuteChanged
+                             object:nil];
+    [notificationCenter addObserver:self
                            selector:@selector(playerStateUpdated:)
                                name:VLCPlayerStateChanged
                              object:nil];
@@ -90,14 +97,6 @@
     [notificationCenter addObserver:self
                            selector:@selector(fullscreenStateUpdated:)
                                name:VLCPlayerFullscreenChanged
-                             object:nil];
-    [notificationCenter addObserver:self
-                           selector:@selector(shuffleStateUpdated:)
-                               name:VLCPlaybackOrderChanged
-                             object:nil];
-    [notificationCenter addObserver:self
-                           selector:@selector(repeatStateUpdated:)
-                               name:VLCPlaybackRepeatChanged
                              object:nil];
 
     _nativeFullscreenMode = var_InheritBool(getIntf(), "macosx-nativefullscreenmode");
@@ -139,11 +138,22 @@
     [self.timeSlider setHidden:NO];
     [self updateTimeSlider:nil];
 
+    NSString *volumeTooltip = [NSString stringWithFormat:_NS("Volume: %i %%"), 100];
+    [self.volumeSlider setToolTip: volumeTooltip];
+    self.volumeSlider.accessibilityLabel = _NS("Volume");
+
+    [self.volumeSlider setMaxValue: VLCVolumeMaximum];
+    [self.volumeSlider setDefaultValue: VLCVolumeDefault];
+    [self updateVolumeSlider:nil];
+
+    [self.muteVolumeButton setToolTip: _NS("Mute")];
+    self.muteVolumeButton.accessibilityLabel = self.muteVolumeButton.toolTip;
+    [self updateMuteVolumeButtonImage];
+
     NSColor *timeFieldTextColor = [NSColor controlTextColor];
 
     [self.timeField setTextColor: timeFieldTextColor];
     [self.timeField setFont:[NSFont titleBarFontOfSize:10.0]];
-    [self.timeField setAlignment: NSCenterTextAlignment];
     [self.timeField setNeedsDisplay:YES];
     [self.timeField setRemainingIdentifier:VLCTimeFieldDisplayTimeAsElapsed];
     self.trailingTimeField.isTimeRemaining = NO;
@@ -152,7 +162,6 @@
     self.trailingTimeField.isTimeRemaining = !self.timeField.isTimeRemaining;
     [self.trailingTimeField setTextColor: timeFieldTextColor];
     [self.trailingTimeField setFont:[NSFont titleBarFontOfSize:10.0]];
-    [self.trailingTimeField setAlignment: NSCenterTextAlignment];
     [self.trailingTimeField setNeedsDisplay:YES];
     [self.trailingTimeField setRemainingIdentifier:VLCTimeFieldDisplayTimeAsRemaining];
     self.trailingTimeField.isTimeRemaining = YES;
@@ -172,23 +181,11 @@
     [self.forwardButton setAction:@selector(fwd:)];
     [self.backwardButton setAction:@selector(bwd:)];
 
-    self.repeatButton.action = @selector(repeatAction:);
-    self.shuffleButton.action = @selector(shuffleAction:);
-
     [self playerStateUpdated:nil];
-    [self repeatStateUpdated:nil];
-    [self shuffleStateUpdated:nil];
 
     [_artworkImageView setCropsImagesToRoundedCorners:YES];
     [_artworkImageView setImage:[NSImage imageNamed:@"noart"]];
     [_artworkImageView setContentGravity:VLCImageViewContentGravityResize];
-
-    _repeatAllImage = [NSImage imageNamed:@"repeatAll"];
-    _repeatOffImage = [NSImage imageNamed:@"repeatOff"];
-    _repeatOneImage = [NSImage imageNamed:@"repeatOne"];
-
-    _shuffleOffImage = [NSImage imageNamed:@"shuffleOff"];
-    _shuffleOnImage = [NSImage imageNamed:@"shuffleOn"];
 }
 
 - (void)dealloc
@@ -311,35 +308,19 @@
     [self.timeSlider setFloatValue:newPosition];
 }
 
+- (IBAction)volumeAction:(id)sender
+{
+    if (sender == self.volumeSlider) {
+        [_playerController setVolume:[sender floatValue]];
+    } else if (sender == self.muteVolumeButton) {
+        [_playerController toggleMute];
+        [self updateMuteVolumeButtonImage];
+    }
+}
+
 - (IBAction)fullscreen:(id)sender
 {
     [_playerController toggleFullscreen];
-}
-
-- (IBAction)shuffleAction:(id)sender
-{
-    if (_playlistController.playbackOrder == VLC_PLAYLIST_PLAYBACK_ORDER_NORMAL) {
-        _playlistController.playbackOrder = VLC_PLAYLIST_PLAYBACK_ORDER_RANDOM;
-    } else {
-        _playlistController.playbackOrder = VLC_PLAYLIST_PLAYBACK_ORDER_NORMAL;
-    }
-}
-
-- (IBAction)repeatAction:(id)sender
-{
-    enum vlc_playlist_playback_repeat currentRepeatState = _playlistController.playbackRepeat;
-    switch (currentRepeatState) {
-        case VLC_PLAYLIST_PLAYBACK_REPEAT_ALL:
-            _playlistController.playbackRepeat = VLC_PLAYLIST_PLAYBACK_REPEAT_NONE;
-            break;
-        case VLC_PLAYLIST_PLAYBACK_REPEAT_CURRENT:
-            _playlistController.playbackRepeat = VLC_PLAYLIST_PLAYBACK_REPEAT_ALL;
-            break;
-
-        default:
-            _playlistController.playbackRepeat = VLC_PLAYLIST_PLAYBACK_REPEAT_CURRENT;
-            break;
-    }
 }
 
 #pragma mark -
@@ -357,7 +338,6 @@
         [self.timeSlider setIndefinite:NO];
         [self.timeSlider setEnabled:NO];
         [self.timeSlider setHidden:YES];
-        [self.nowPlayingView setHidden:YES];
         return;
     }
 
@@ -372,7 +352,6 @@
         _artworkImageView.image = [NSImage imageNamed:@"noart"];
     }
 
-    [self.nowPlayingView setHidden:NO];
     [self.timeSlider setHidden:NO];
     [self.timeSlider setKnobHidden:NO];
     [self.timeSlider setFloatValue:_playerController.position];
@@ -401,46 +380,38 @@
     [self.trailingTimeField setNeedsDisplay:YES];
 }
 
+- (void)updateVolumeSlider:(NSNotification *)aNotification
+{
+    float f_volume = _playerController.volume;
+    BOOL b_muted = _playerController.mute;
+
+    if (b_muted)
+        f_volume = 0.f;
+
+    [self.volumeSlider setFloatValue: f_volume];
+    NSString *volumeTooltip = [NSString stringWithFormat:_NS("Volume: %i %%"), (int)(f_volume * 100.0f)];
+    [self.volumeSlider setToolTip:volumeTooltip];
+
+    [self.volumeSlider setEnabled: !b_muted];
+}
+
+- (void)updateMuteVolumeButton:(NSNotification*)aNotification
+{
+    [self updateMuteVolumeButtonImage];
+}
+
+- (void)updateMuteVolumeButtonImage
+{
+    _muteVolumeButton.image = _playerController.mute ?
+        imageFromRes(@"volume-low") : imageFromRes(@"volume-high");
+}
+
 - (void)playerStateUpdated:(NSNotification *)aNotification
 {
     if (_playerController.playerState == VLC_PLAYER_STATE_PLAYING) {
         [self setPause];
     } else {
         [self setPlay];
-    }
-}
-
-- (void)repeatStateUpdated:(NSNotification *)aNotification
-{
-    enum vlc_playlist_playback_repeat currentRepeatState = _playlistController.playbackRepeat;
-
-    switch (currentRepeatState) {
-        case VLC_PLAYLIST_PLAYBACK_REPEAT_CURRENT:
-            self.repeatButton.image = _repeatOneImage;
-            break;
-        case VLC_PLAYLIST_PLAYBACK_REPEAT_ALL:
-            self.repeatButton.image = _repeatAllImage;
-            break;
-        case VLC_PLAYLIST_PLAYBACK_REPEAT_NONE:
-        default:
-            self.repeatButton.image = _repeatOffImage;
-            break;
-    }
-
-    if (@available(macOS 11.0, *)) {
-        self.repeatButton.contentTintColor = currentRepeatState == VLC_PLAYLIST_PLAYBACK_REPEAT_NONE ?
-            nil : [NSColor VLCAccentColor];
-    }
-}
-
-- (void)shuffleStateUpdated:(NSNotification *)aNotification
-{
-    self.shuffleButton.image = _playlistController.playbackOrder == VLC_PLAYLIST_PLAYBACK_ORDER_NORMAL ?
-        _shuffleOffImage : _shuffleOnImage;
-
-    if (@available(macOS 11.0, *)) {
-        self.shuffleButton.contentTintColor = _playlistController.playbackOrder == VLC_PLAYLIST_PLAYBACK_ORDER_NORMAL ?
-            nil : [NSColor VLCAccentColor];
     }
 }
 

@@ -27,6 +27,9 @@
 
 #import "main/VLCMain.h"
 
+#import "playlist/VLCPlaylistController.h"
+#import "playlist/VLCPlayerController.h"
+
 #import "views/VLCBottomBarView.h"
 
 #import "windows/video/VLCVideoWindowCommon.h"
@@ -63,6 +66,16 @@
                              object:nil];
 }
 
+- (BOOL)mouseOnControls
+{
+    NSPoint mousePos = [self.view.window mouseLocationOutsideOfEventStream];
+
+    return [_centralControlsStackView mouse:mousePos inRect:_centralControlsStackView.frame] ||
+        [_controlsBar.bottomBarView mouse:mousePos inRect: _controlsBar.bottomBarView.frame] ||
+        [_returnButton mouse:mousePos inRect: _returnButton.frame] ||
+        [_playlistButton mouse:mousePos inRect: _playlistButton.frame];
+}
+
 - (void)stopAutohideTimer
 {
     [_hideControlsTimer invalidate];
@@ -88,6 +101,15 @@
 - (void)hideControls:(id)sender
 {
     [self stopAutohideTimer];
+
+    NSPoint mousePos = [self.view.window mouseLocationOutsideOfEventStream];
+
+    if ([self mouseOnControls] ||
+        VLCMain.sharedInstance.playlistController.playerController.playerState == VLC_PLAYER_STATE_PAUSED) {
+        [self showControls];
+        return;
+    }
+
     _mainControlsView.hidden = YES;
 }
 

@@ -28,8 +28,11 @@
 
 #if defined(_MSC_VER)
 // disable common warnings when compiling POSIX code
-#ifndef _CRT_NONSTDC_NO_WARNINGS
-#define _CRT_NONSTDC_NO_WARNINGS    1
+#ifndef _CRT_NONSTDC_NO_DEPRECATE
+// the POSIX variants are not available in the GDK
+# if !(defined(_GAMING_XBOX_SCARLETT) || defined(_GAMING_XBOX_XBOXONE) || defined(_XBOX_ONE))
+#  define _CRT_NONSTDC_NO_DEPRECATE
+# endif
 #endif
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS     1
@@ -53,6 +56,26 @@ typedef unsigned short mode_t;
 // since we define restrist as __restrict for C++, __declspec(restrict) is bogus
 #define _CRT_SUPPRESS_RESTRICT
 #define DECLSPEC_RESTRICT
+
+// turn CPU MSVC-ism into more standard defines
+#if defined(_M_X64) && !defined(__x86_64__)
+# define __x86_64__
+#endif
+#if defined(_M_IX86) && !defined(__i386__)
+# define __i386__
+#endif
+#if defined(_M_ARM64) && !defined(__aarch64__)
+# define __aarch64__
+#endif
+#if defined(_M_ARM) && !defined(__arm__)
+# define __arm__
+#endif
+#if defined(_M_IX86_FP) && _M_IX86_FP == 1 && !defined(__SSE__)
+# define __SSE__
+#endif
+#if defined(_M_IX86_FP) && _M_IX86_FP == 2 && !defined(__SSE2__)
+# define __SSE2__
+#endif
 
 #endif // _MSC_VER
 

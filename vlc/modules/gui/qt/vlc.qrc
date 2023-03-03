@@ -278,7 +278,6 @@
         <file alias="AcrylicController.qml">style/AcrylicController.qml</file>
         <file alias="qmldir">style/qmldir</file>
         <file alias="VLCStyle.qml">style/VLCStyle.qml</file>
-        <file alias="VLCColors.qml">style/VLCColors.qml</file>
         <file alias="VLCIcons.qml">style/VLCIcons.qml</file>
     </qresource>
     <qresource prefix="/playlist">
@@ -327,7 +326,6 @@
         <file alias="ChapterNextButton.qml">player/qml/controlbarcontrols/ChapterNextButton.qml</file>
         <file alias="ChapterPreviousButton.qml">player/qml/controlbarcontrols/ChapterPreviousButton.qml</file>
         <file alias="ControlButtonPopup.qml">player/qml/controlbarcontrols/ControlButtonPopup.qml</file>
-        <file alias="ControlCheckButton.qml">player/qml/controlbarcontrols/ControlCheckButton.qml</file>
         <file alias="DvdMenuButton.qml">player/qml/controlbarcontrols/DvdMenuButton.qml</file>
         <file alias="ExpandingSpacerWidget.qml">player/qml/controlbarcontrols/ExpandingSpacerWidget.qml</file>
         <file alias="ExtendedSettingsButton.qml">player/qml/controlbarcontrols/ExtendedSettingsButton.qml</file>

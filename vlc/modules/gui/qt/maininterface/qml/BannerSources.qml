@@ -28,6 +28,7 @@ import org.videolan.vlc 0.1
 import org.videolan.compat 0.1
 
 import "qrc:///style/"
+import "qrc:///playlist/" as PL
 import "qrc:///widgets/" as Widgets
 import "qrc:///menus/" as Menus
 import "qrc:///util/Helpers.js" as Helpers
@@ -50,6 +51,10 @@ FocusScope {
     property var extraLocalActions: undefined
     property alias localMenuDelegate: localMenuGroup.sourceComponent
 
+    // For now, used for d&d functionality
+    // Not strictly necessary to set
+    property PL.PlaylistListView plListView: null
+
     property bool _showCSD: MainCtx.clientSideDecoration && !(MainCtx.intfMainWindow.visibility === Window.FullScreen)
 
     signal itemClicked(int index)
@@ -63,6 +68,11 @@ FocusScope {
 
     function search() {
         searchBox.state = "expanded"
+    }
+
+    ColorContext {
+        id: theme
+        colorSet: ColorContext.Window
     }
 
     BindingCompat {
@@ -80,7 +90,8 @@ FocusScope {
     }
 
     Widgets.AcrylicBackground {
-        alternativeColor: VLCStyle.colors.topBanner
+        tintColor: theme.bg.primary
+        alternativeColor: theme.bg.secondary
         anchors.fill: parent
     }
 
@@ -153,7 +164,6 @@ FocusScope {
                                  text: I18n.qtr("Previous")
                                  height: VLCStyle.bannerButton_height
                                  width: VLCStyle.bannerButton_width
-                                 colorDisabled: VLCStyle.colors.textDisabled
                                  onClicked: History.previous()
                                  enabled: !History.previousEmpty
 
@@ -163,7 +173,7 @@ FocusScope {
                             }
 
                             Widgets.BannerCone {
-
+                                color: theme.accent
                             }
                         }
 
@@ -187,7 +197,6 @@ FocusScope {
 
                             delegate: Widgets.BannerTabButton {
                                 iconTxt: model.icon
-                                color: VLCStyle.colors.setColorAlpha(VLCStyle.colors.buttonHover, 0)
                                 showText: globalToolbar.colapseTabButtons
                                 selected: model.index === root.selectedIndex
                                 onClicked: root.itemClicked(model.index)
@@ -206,7 +215,7 @@ FocusScope {
                     }
                     height: VLCStyle.globalToolbar_height
                     active: root._showCSD
-                    source: VLCStyle.theme.hasCSDImage
+                    source: VLCStyle.palette.hasCSDImage
                               ? "qrc:///widgets/CSDThemeButtonSet.qml"
                               : "qrc:///widgets/CSDWindowButtonSet.qml"
                 }
@@ -235,7 +244,7 @@ FocusScope {
                 background: Rectangle {
                     id: localToolbarBg
 
-                    color: VLCStyle.colors.lowerBanner
+                    color: theme.bg.secondary
                     Rectangle {
                         anchors.left : parent.left
                         anchors.right: parent.right
@@ -243,7 +252,7 @@ FocusScope {
 
                         height: VLCStyle.border
 
-                        color: VLCStyle.colors.border
+                        color: theme.border
                     }
                 }
 
@@ -350,6 +359,8 @@ FocusScope {
                         anchors.right: playlistGroup.left
                         anchors.rightMargin: VLCStyle.margin_xxsmall // only applied when right aligned
 
+                        ScrollBar.horizontal: ScrollBar { }
+
                         on_AlignHCenterChanged: {
                             if (_alignHCenter) {
                                 anchors.horizontalCenter = localToolbarContent.horizontalCenter
@@ -415,6 +426,8 @@ FocusScope {
                             Widgets.IconToolButton {
                                 id: playlist_btn
 
+                                checked: MainCtx.playlistVisible
+
                                 size: VLCStyle.icon_banner
                                 iconText: VLCIcons.playlist
                                 text: I18n.qtr("Playlist")
@@ -423,6 +436,46 @@ FocusScope {
                                 highlighted: MainCtx.playlistVisible
 
                                 onClicked:  MainCtx.playlistVisible = !MainCtx.playlistVisible
+
+                                DropArea {
+                                    anchors.fill: parent
+
+                                    onContainsDragChanged: {
+                                        if (containsDrag) {
+                                            _timer.restart()
+
+                                            if (plListView)
+                                                MainCtx.setCursor(Qt.DragCopyCursor)
+                                        } else {
+                                            _timer.stop()
+
+                                            if (plListView)
+                                                MainCtx.restoreCursor()
+                                        }
+                                    }
+
+                                    onEntered: {
+                                        if (drag.hasUrls || Helpers.isValidInstanceOf(drag.source, Widgets.DragItem)) {
+                                            drag.accept() // Not actually necessary, as it is accepted by default
+                                        } else {
+                                            drag.accepted = false
+                                        }
+                                    }
+
+                                    onDropped: {
+                                        if (plListView)
+                                            plListView.acceptDrop(plListView.model.count, drop)
+                                    }
+
+                                    Timer {
+                                        id: _timer
+                                        interval: VLCStyle.duration_humanMoment
+
+                                        onTriggered: {
+                                            MainCtx.playlistVisible = true
+                                        }
+                                    }
+                                }
                             }
 
                             Widgets.IconToolButton {

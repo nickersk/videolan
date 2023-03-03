@@ -322,101 +322,31 @@ static int  CmdExecuteControl( es_out_t *, ts_cmd_control_t * );
 static int  CmdExecutePrivControl( es_out_t *, ts_cmd_privcontrol_t * );
 
 /* File helpers */
-static int GetTmpFile( char **ppsz_file, const char *psz_path );
-
-static const struct es_out_callbacks es_out_timeshift_cbs;
-
-/*****************************************************************************
- * input_EsOutTimeshiftNew:
- *****************************************************************************/
-es_out_t *input_EsOutTimeshiftNew( input_thread_t *p_input, es_out_t *p_next_out, float rate )
+static int GetTmpFile( char **filename, const char *dirname )
 {
-    es_out_sys_t *p_sys = malloc( sizeof(*p_sys) );
-    if( !p_sys )
-        return NULL;
-
-    p_sys->out.cbs = &es_out_timeshift_cbs;
-
-    /* */
-    p_sys->b_input_paused = false;
-    p_sys->b_input_paused_source = false;
-    p_sys->p_input = p_input;
-    p_sys->input_rate = rate;
-    p_sys->input_rate_source = rate;
-
-    p_sys->p_out = p_next_out;
-    vlc_mutex_init_recursive( &p_sys->lock );
-
-    p_sys->b_delayed = false;
-    p_sys->p_ts = NULL;
-
-    TAB_INIT( p_sys->i_es, p_sys->pp_es );
-
-    /* */
-    const int i_tmp_size_max = var_CreateGetInteger( p_input, "input-timeshift-granularity" );
-    if( i_tmp_size_max < 0 )
-        p_sys->i_tmp_size_max = 50*1024*1024;
-    else
-        p_sys->i_tmp_size_max = __MAX( i_tmp_size_max, 1*1024*1024 );
-    msg_Dbg( p_input, "using timeshift granularity of %d MiB",
-             (int)p_sys->i_tmp_size_max/(1024*1024) );
-
-    p_sys->psz_tmp_path = var_InheritString( p_input, "input-timeshift-path" );
-#if defined (_WIN32) && !defined(VLC_WINSTORE_APP)
-    if( p_sys->psz_tmp_path == NULL )
+    if( dirname != NULL
+     && asprintf( filename, "%s"DIR_SEP PACKAGE_NAME"-timeshift.XXXXXX",
+                  dirname ) >= 0 )
     {
-        const DWORD count = GetTempPath( 0, NULL );
-        if( count > 0 )
-        {
-            WCHAR *path = vlc_alloc( count + 1, sizeof(WCHAR) );
-            if( path != NULL )
-            {
-                DWORD ret = GetTempPath( count + 1, path );
-                if( ret != 0 && ret <= count )
-                    p_sys->psz_tmp_path = FromWide( path );
-                free( path );
-            }
-        }
+        vlc_mkdir( dirname, 0700 );
+
+        int fd = vlc_mkstemp( *filename );
+        if( fd != -1 )
+            return fd;
+
+        free( *filename );
     }
-    if( p_sys->psz_tmp_path == NULL )
-    {
-        wchar_t *wpath = _wgetcwd( NULL, 0 );
-        if( wpath != NULL )
-        {
-            p_sys->psz_tmp_path = FromWide( wpath );
-            free( wpath );
-        }
-    }
-    if( p_sys->psz_tmp_path == NULL )
-        p_sys->psz_tmp_path = strdup( "C:" );
 
-    if( p_sys->psz_tmp_path != NULL )
-    {
-        size_t len = strlen( p_sys->psz_tmp_path );
+    *filename = strdup( DIR_SEP"tmp"DIR_SEP PACKAGE_NAME"-timeshift.XXXXXX" );
+    if( unlikely(*filename == NULL) )
+        return -1;
 
-        while( len > 0 && p_sys->psz_tmp_path[len - 1] == DIR_SEP_CHAR )
-            len--;
+    int fd = vlc_mkstemp( *filename );
+    if( fd != -1 )
+        return fd;
 
-        p_sys->psz_tmp_path[len] = '\0';
-    }
-#endif
-    if( p_sys->psz_tmp_path != NULL )
-        msg_Dbg( p_input, "using timeshift path: %s", p_sys->psz_tmp_path );
-    else
-        msg_Dbg( p_input, "using default timeshift path" );
-
-#if 0
-#define S(t) msg_Err( p_input, "SIZEOF("#t")=%zd", sizeof(t) )
-    S(ts_cmd_t);
-    S(ts_cmd_control_t);
-    S(ts_cmd_privcontrol_t);
-    S(ts_cmd_send_t);
-    S(ts_cmd_del_t);
-    S(ts_cmd_add_t);
-#undef S
-#endif
-
-    return &p_sys->out;
+    free( *filename );
+    return -1;
 }
 
 /*****************************************************************************
@@ -871,6 +801,99 @@ static const struct es_out_callbacks es_out_timeshift_cbs =
     .destroy = Destroy,
     .priv_control = PrivControl,
 };
+
+/*****************************************************************************
+ * input_EsOutTimeshiftNew:
+ *****************************************************************************/
+es_out_t *input_EsOutTimeshiftNew( input_thread_t *p_input, es_out_t *p_next_out, float rate )
+{
+    es_out_sys_t *p_sys = malloc( sizeof(*p_sys) );
+    if( !p_sys )
+        return NULL;
+
+    p_sys->out.cbs = &es_out_timeshift_cbs;
+
+    /* */
+    p_sys->b_input_paused = false;
+    p_sys->b_input_paused_source = false;
+    p_sys->p_input = p_input;
+    p_sys->input_rate = rate;
+    p_sys->input_rate_source = rate;
+
+    p_sys->p_out = p_next_out;
+    vlc_mutex_init_recursive( &p_sys->lock );
+
+    p_sys->b_delayed = false;
+    p_sys->p_ts = NULL;
+
+    TAB_INIT( p_sys->i_es, p_sys->pp_es );
+
+    /* */
+    const int i_tmp_size_max = var_CreateGetInteger( p_input, "input-timeshift-granularity" );
+    if( i_tmp_size_max < 0 )
+        p_sys->i_tmp_size_max = 50*1024*1024;
+    else
+        p_sys->i_tmp_size_max = __MAX( i_tmp_size_max, 1*1024*1024 );
+    msg_Dbg( p_input, "using timeshift granularity of %d MiB",
+             (int)p_sys->i_tmp_size_max/(1024*1024) );
+
+    p_sys->psz_tmp_path = var_InheritString( p_input, "input-timeshift-path" );
+#if defined (_WIN32) && !defined(VLC_WINSTORE_APP)
+    if( p_sys->psz_tmp_path == NULL )
+    {
+        const DWORD count = GetTempPath( 0, NULL );
+        if( count > 0 )
+        {
+            WCHAR *path = vlc_alloc( count + 1, sizeof(WCHAR) );
+            if( path != NULL )
+            {
+                DWORD ret = GetTempPath( count + 1, path );
+                if( ret != 0 && ret <= count )
+                    p_sys->psz_tmp_path = FromWide( path );
+                free( path );
+            }
+        }
+    }
+    if( p_sys->psz_tmp_path == NULL )
+    {
+        wchar_t *wpath = _wgetcwd( NULL, 0 );
+        if( wpath != NULL )
+        {
+            p_sys->psz_tmp_path = FromWide( wpath );
+            free( wpath );
+        }
+    }
+    if( p_sys->psz_tmp_path == NULL )
+        p_sys->psz_tmp_path = strdup( "C:" );
+
+    if( p_sys->psz_tmp_path != NULL )
+    {
+        size_t len = strlen( p_sys->psz_tmp_path );
+
+        while( len > 0 && p_sys->psz_tmp_path[len - 1] == DIR_SEP_CHAR )
+            len--;
+
+        p_sys->psz_tmp_path[len] = '\0';
+    }
+#endif
+    if( p_sys->psz_tmp_path != NULL )
+        msg_Dbg( p_input, "using timeshift path: %s", p_sys->psz_tmp_path );
+    else
+        msg_Dbg( p_input, "using default timeshift path" );
+
+#if 0
+#define S(t) msg_Err( p_input, "SIZEOF("#t")=%zd", sizeof(t) )
+    S(ts_cmd_t);
+    S(ts_cmd_control_t);
+    S(ts_cmd_privcontrol_t);
+    S(ts_cmd_send_t);
+    S(ts_cmd_del_t);
+    S(ts_cmd_add_t);
+#undef S
+#endif
+
+    return &p_sys->out;
+}
 
 /*****************************************************************************
  *
@@ -1821,31 +1844,4 @@ static int CmdExecutePrivControl( es_out_t *p_tsout, ts_cmd_privcontrol_t *p_cmd
         return es_out_PrivControl( p_sys->p_out, i_query );
     default: vlc_assert_unreachable();
     }
-}
-
-static int GetTmpFile( char **filename, const char *dirname )
-{
-    if( dirname != NULL
-     && asprintf( filename, "%s"DIR_SEP PACKAGE_NAME"-timeshift.XXXXXX",
-                  dirname ) >= 0 )
-    {
-        vlc_mkdir( dirname, 0700 );
-
-        int fd = vlc_mkstemp( *filename );
-        if( fd != -1 )
-            return fd;
-
-        free( *filename );
-    }
-
-    *filename = strdup( DIR_SEP"tmp"DIR_SEP PACKAGE_NAME"-timeshift.XXXXXX" );
-    if( unlikely(*filename == NULL) )
-        return -1;
-
-    int fd = vlc_mkstemp( *filename );
-    if( fd != -1 )
-        return fd;
-
-    free( *filename );
-    return -1;
 }

@@ -20,13 +20,23 @@
 
 #include <QObject>
 #include <QColor>
+#include <QPalette>
 #include <QQuickImageProvider>
 #include <QQuickItem>
+#include <QPointer>
+#include <QtQml/QQmlParserStatus>
 
 #include "qt.hpp"
 #include "util/color_scheme_model.hpp"
 
 #include "qtthemeprovider.hpp"
+
+#include "colorcontext.hpp"
+
+class SystemPalette;
+class ColorProperty;
+class ColorContextState;
+
 
 class CSDMetrics : public QObject {
     Q_OBJECT
@@ -51,7 +61,7 @@ class ExternalPaletteImpl : public QObject
 {
     Q_OBJECT
 public:
-    ExternalPaletteImpl(MainCtx* ctx, QObject* parent = nullptr);
+    ExternalPaletteImpl(MainCtx* ctx, SystemPalette& palette, QObject* parent = nullptr);
 
     ~ExternalPaletteImpl();
 
@@ -64,7 +74,7 @@ public:
 
     bool hasCSDImages() const;
 
-    void update(vlc_qt_palette_t& p);
+    int update();
     void updateMetrics(vlc_qt_theme_image_type type);
 
 signals:
@@ -72,21 +82,12 @@ signals:
     void CSDMetricsChanged();
 
 public:
+    SystemPalette& m_palette;
     MainCtx* m_ctx = nullptr;
     module_t* m_module = nullptr;
     vlc_qt_theme_provider_t* m_provider = nullptr;
     std::unique_ptr<CSDMetrics> m_csdMetrics;
 };
-
-
-#define COLOR_PROPERTY(name) \
-    Q_PROPERTY(QColor name READ get_##name NOTIFY paletteChanged FINAL) \
-public: \
-    inline QColor get_## name() const { return m_##name; } \
-private: \
-    QColor m_##name { "#FF00FF" };
-
-
 
 #define COLOR_DEFINITION(name, value) \
     Q_PROPERTY(QColor name READ get_##name NOTIFY paletteChanged FINAL) \
@@ -107,13 +108,12 @@ public:
     Q_PROPERTY(bool hasCSDImage READ hasCSDImage NOTIFY hasCSDImageChanged FINAL)
     Q_PROPERTY(CSDMetrics* csdMetrics READ getCSDMetrics NOTIFY CSDMetricsChanged FINAL)
 
-
-    VLC_QT_INTF_PUBLIC_COLORS(COLOR_PROPERTY)
-#undef COLOR_PROPERTY
-
     //standard color definitions used by light/dark themes
     COLOR_DEFINITION(orange500, "#FF8800");
     COLOR_DEFINITION(orange800, "#FF610A");
+
+    COLOR_DEFINITION(orange400, "#f89a06"); //FIXME name have been chosen randomly by me
+    COLOR_DEFINITION(orange200, "#e29a06"); //FIXME name have been chosen randomly by me
 
     COLOR_DEFINITION(darkGrey200, "#1E1E1E");
     COLOR_DEFINITION(darkGrey300, "#212121");
@@ -130,6 +130,8 @@ public:
     COLOR_DEFINITION(lightGrey500, "#E9E9E9");
     COLOR_DEFINITION(lightGrey600, "#E5E5E5");
 
+    COLOR_DEFINITION(red500, "#FF0000");
+
 public:
     SystemPalette(QObject* parent = nullptr);
 
@@ -143,6 +145,11 @@ public:
     //function helper exposed to QML
     Q_INVOKABLE QColor blendColors(const QColor& c1, const QColor& c2, float blend = 0.5);
     Q_INVOKABLE QColor setColorAlpha(const QColor& c1, float alpha);
+
+    void setColor(ColorContext::ColorSet colorSet,  ColorContext::ColorSection section,
+                  ColorContext::ColorName name, ColorContext::ColorState state, QColor color);
+    QColor getColor(ColorContext::ColorSet colorSet,  ColorContext::ColorSection section,
+                    ColorContext::ColorName name, ColorContext::ColorState state) const;
 
 public slots:
     void setSource(ColorSchemeModel::ColorScheme source);
@@ -171,6 +178,9 @@ private:
     bool m_hasCSDImage = false;
 
     std::unique_ptr<ExternalPaletteImpl> m_palettePriv;
+
+    QMap<quint64, QColor> m_colorMap;
+
 };
 
 #undef COLOR_PROPERTY

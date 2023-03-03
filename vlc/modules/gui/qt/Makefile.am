@@ -246,6 +246,8 @@ libqt_plugin_la_SOURCES = \
 	gui/qt/network/standardpathmodel.cpp \
 	gui/qt/network/standardpathmodel.hpp \
 	gui/qt/style/qtthemeprovider.hpp \
+	gui/qt/style/colorcontext.cpp \
+	gui/qt/style/colorcontext.hpp \
 	gui/qt/style/systempalette.cpp \
 	gui/qt/style/systempalette.hpp \
 	gui/qt/style/defaultthemeproviders.hpp \
@@ -464,6 +466,7 @@ nodist_libqt_plugin_la_SOURCES = \
 	gui/qt/network/networkmediamodel.moc.cpp \
 	gui/qt/network/servicesdiscoverymodel.moc.cpp \
 	gui/qt/network/standardpathmodel.moc.cpp \
+	gui/qt/style/colorcontext.moc.cpp \
 	gui/qt/style/systempalette.moc.cpp \
 	gui/qt/player/input_models.moc.cpp \
 	gui/qt/player/player_controller.moc.cpp \
@@ -914,7 +917,6 @@ libqt_plugin_la_QML = \
 	gui/qt/player/qml/controlbarcontrols/ChapterNextButton.qml \
 	gui/qt/player/qml/controlbarcontrols/ChapterPreviousButton.qml \
 	gui/qt/player/qml/controlbarcontrols/ControlButtonPopup.qml \
-	gui/qt/player/qml/controlbarcontrols/ControlCheckButton.qml \
 	gui/qt/player/qml/controlbarcontrols/DvdMenuButton.qml \
 	gui/qt/player/qml/controlbarcontrols/ExpandingSpacerWidget.qml \
 	gui/qt/player/qml/controlbarcontrols/ExtendedSettingsButton.qml \
@@ -956,7 +958,6 @@ libqt_plugin_la_QML = \
 	gui/qt/playlist/qml/PlaylistToolbar.qml \
 	gui/qt/playlist/qml/PlaylistDetachedWindow.qml \
 	gui/qt/style/AcrylicController.qml \
-	gui/qt/style/VLCColors.qml \
 	gui/qt/style/VLCIcons.qml \
 	gui/qt/style/VLCStyle.qml \
 	gui/qt/style/qmldir \

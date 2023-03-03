@@ -35,22 +35,16 @@ QtObject {
 
     property alias self: vlc_style
 
-    readonly property SystemPalette theme:  SystemPalette {
+    readonly property SystemPalette palette:  SystemPalette {
+        objectName: "themePalette"
         source: MainCtx.colorScheme.scheme
         ctx: MainCtx
     }
 
-    readonly property VLCColors colors: VLCColors {
-        palette: vlc_style.theme
-    }
-
-    // When trying to force night/dark theme colors for items,
-    // this can be used:
-    readonly property VLCColors nightColors: VLCColors {
-        palette: SystemPalette {
-            source: ColorSchemeModel.Night
-            ctx: MainCtx
-        }
+    readonly property SystemPalette darkPalette: SystemPalette {
+        objectName: "darkPalette"
+        source: ColorSchemeModel.Night
+        ctx: MainCtx
     }
 
     // Sizes
@@ -303,6 +297,10 @@ QtObject {
     readonly property int maxControlbarControlHeight: dp(64, scale)
 
     readonly property var dp: MainCtx.dp
+
+    //"alias" ColorHelper functions
+    readonly property var blendColors: vlc_style.palette.blendColors
+    readonly property var setColorAlpha: vlc_style.palette.setColorAlpha
 
     function colWidth(nb) {
       return nb * VLCStyle.column_width + ( nb - 1 ) * VLCStyle.column_spacing;

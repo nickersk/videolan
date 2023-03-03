@@ -22,7 +22,12 @@
 
 #import "VLCFullVideoViewWindow.h"
 
+#import "VLCMainVideoViewController.h"
+
 #import "main/VLCMain.h"
+
+#import "playlist/VLCPlaylistController.h"
+#import "playlist/VLCPlayerController.h"
 
 @interface VLCFullVideoViewWindow ()
 {
@@ -88,6 +93,13 @@
 - (void)hideTitleBar:(id)sender
 {
     [self stopTitlebarAutohideTimer];
+
+    if (self.videoViewController.mouseOnControls ||
+        VLCMain.sharedInstance.playlistController.playerController.playerState == VLC_PLAYER_STATE_PAUSED) {
+        [self showTitleBar];
+        return;
+    }
+
     [self standardWindowButton:NSWindowCloseButton].superview.hidden = YES;
 }
 

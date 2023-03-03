@@ -28,8 +28,6 @@ import "qrc:///style/"
 T.Pane {
     id: root
 
-    property VLCColors colors: VLCStyle.colors
-
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                             contentWidth + leftPadding + rightPadding)
 
@@ -45,11 +43,16 @@ T.Pane {
     function _teletextButtonColor(item, base)
     {
         if (!item.enabled)
-            return VLCStyle.colors.setColorAlpha(base, 0.2)
+            return VLCStyle.setColorAlpha(base, 0.2)
         else if (item.hovered && !item.down)
             return Qt.lighter(base)
         else
             return base
+    }
+
+    readonly property ColorContext colorContext: ColorContext {
+        id: theme
+        colorSet: ColorContext.Window
     }
 
     Column {
@@ -69,21 +72,18 @@ T.Pane {
 
                 text: I18n.qtr("Teletext")
 
-                color: root.colors.text
+                color: theme.fg.primary
             }
 
-            ControlCheckButton {
+            Widgets.CheckButton {
                 id: teleActivateBtn
 
                 anchors.right: parent.right
-
                 anchors.verticalCenter: parent.verticalCenter
 
                 focus: true
 
                 checked: Player.teletextEnabled
-
-                colors: root.colors
 
                 Navigation.parentItem: root
                 Navigation.rightItem: teleTransparencyBtn
@@ -108,8 +108,6 @@ T.Pane {
 
                 iconText: VLCIcons.transparency
                 text: I18n.qtr("Teletext transparency")
-
-                colors: root.colors
 
                 T.ToolTip.visible: (hovered || visualFocus)
 
@@ -138,8 +136,6 @@ T.Pane {
                 }
 
                 editable: true
-                textColor: colors.text
-                bgColor: colors.bg
 
                 Navigation.parentItem: root
                 Navigation.leftItem: teleTransparencyBtn
@@ -189,8 +185,6 @@ T.Pane {
                 iconText: VLCIcons.home
                 text: I18n.qtr("Index key")
 
-                colors: root.colors
-
                 T.ToolTip.visible: (hovered || visualFocus)
 
                 Navigation.parentItem: root
@@ -210,7 +204,6 @@ T.Pane {
 
                 text: I18n.qtr("Red key")
 
-                colors: root.colors
                 color: root._teletextButtonColor(this, "red")
 
                 Navigation.parentItem: root
@@ -230,7 +223,6 @@ T.Pane {
 
                 text: I18n.qtr("Green key")
 
-                colors: root.colors
                 color: root._teletextButtonColor(this, "green")
 
                 Navigation.parentItem: root
@@ -250,7 +242,6 @@ T.Pane {
 
                 text: I18n.qtr("Yellow key")
 
-                colors: root.colors
                 color: root._teletextButtonColor(this, "yellow")
 
                 Navigation.parentItem: root
@@ -270,7 +261,6 @@ T.Pane {
 
                 text: I18n.qtr("Blue key")
 
-                colors: root.colors
                 color: root._teletextButtonColor(this, "blue")
 
                 Navigation.parentItem: root

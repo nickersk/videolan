@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readwrite, strong) IBOutlet VLCVoutView *voutView;
 @property (readwrite, strong) IBOutlet NSBox *mainControlsView;
+@property (readwrite, strong) IBOutlet NSStackView *centralControlsStackView;
 @property (readwrite, strong) IBOutlet VLCControlsBarCommon *controlsBar;
 @property (readwrite, strong) IBOutlet NSButton *returnButton;
 @property (readwrite, strong) IBOutlet NSButton *playlistButton;
@@ -39,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readwrite, nonatomic) BOOL autohideControls;
 @property (readwrite, nonatomic) BOOL displayLibraryControls;
+@property (readonly) BOOL mouseOnControls;
 
 - (void)showControls;
 
